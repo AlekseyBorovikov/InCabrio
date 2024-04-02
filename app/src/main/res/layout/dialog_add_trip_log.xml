@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/small_padding"
+    android:orientation="horizontal">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/timeBlock"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:padding="@dimen/small_padding"
+        android:background="@color/gray"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <NumberPicker
+            android:id="@+id/hourPicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <TextView
+            android:id="@+id/timeSeparator"
+            android:text=":"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/small_margin"
+            app:layout_constraintStart_toEndOf="@id/hourPicker"
+            app:layout_constraintEnd_toStartOf="@id/minutePicker"
+            app:layout_constraintTop_toTopOf="@id/hourPicker"
+            app:layout_constraintBottom_toBottomOf="@id/hourPicker"/>
+
+        <NumberPicker
+            android:id="@+id/minutePicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/small_margin"
+            app:layout_constraintStart_toEndOf="@id/timeSeparator"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toEndOf="@id/timeBlock"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_weight="1"
+        android:padding="@dimen/small_padding">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/trip_dialog_tripOfDay_tag"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/triplog_add_trip_tripOfDay_tag"
+            android:gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/trip_dialog_ascentSpinner"
+            app:layout_constraintEnd_toEndOf="@id/trip_dialog_passengers_tag" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/trip_dialog_tripOfDay"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="number"
+            android:imeOptions="actionDone"
+            android:gravity="center"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/trip_dialog_tripOfDay_tag"
+            app:layout_constraintStart_toEndOf="@id/trip_dialog_tripOfDay_tag"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+<!--        <androidx.appcompat.widget.AppCompatTextView-->
+<!--            android:id="@+id/trip_dialog_ascent_tag"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="0dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:gravity="center"-->
+<!--            android:text="@string/triplog_add_trip_ascent_tag"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/trip_dialog_tripOfDay_tag"-->
+<!--            app:layout_constraintBottom_toBottomOf="@id/trip_dialog_passengers_tag"-->
+<!--            app:layout_constraintEnd_toEndOf="@id/trip_dialog_passengers_tag" />-->
+
+        <Spinner
+            android:id="@+id/trip_dialog_ascentSpinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:theme="@style/Theme.Stanserhorn.DirectionSpinner"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/trip_dialog_tripOfDay_tag"
+            app:layout_constraintBottom_toTopOf="@id/trip_dialog_passengers_tag"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/trip_dialog_passengers_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/triplog_add_trip_passengers_tag"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/trip_dialog_ascentSpinner"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/trip_dialog_passengers"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:imeOptions="actionDone"
+            android:gravity="center"
+            app:layout_constraintTop_toTopOf="@id/trip_dialog_passengers_tag"
+            app:layout_constraintBottom_toBottomOf="@id/trip_dialog_passengers_tag"
+            app:layout_constraintStart_toEndOf="@id/trip_dialog_passengers_tag"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:padding="@dimen/small_padding">
+
+        <TextView
+            android:id="@+id/trip_dialog_remarks_tag"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginBottom="@dimen/small_margin"
+            android:text="@string/triplog_add_trip_remarks_tag" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/trip_dialog_remarks"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="text|textMultiLine"
+            android:gravity="top"
+            android:imeOptions="actionDone" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:layout_marginBottom="@dimen/big_margin"
+    app:cardCornerRadius="@dimen/radius">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/big_padding">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/big_margin" >
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/marker"
+                android:layout_width="@dimen/small_icon_size"
+                android:layout_height="@dimen/small_icon_size"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/small_margin" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/destinationImg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/small_margin"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_ascent_arrow" />
+
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/Text.Large"
+                android:layout_marginEnd="@dimen/small_margin"
+                tools:text="10:35" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/small_margin"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_people" />
+
+            <TextView
+                android:id="@+id/peopleCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/Text.Large"
+                tools:text="25" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/Text.Medium"
+            android:layout_weight="1"
+            tools:text="description" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

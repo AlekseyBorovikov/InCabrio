@@ -1,0 +1,133 @@
+<resources>
+    <string name="app_name">Stanserhorn</string>
+    <string name="global_app_name">inCabrio</string>
+    <string name="global_version">2.0</string>
+
+    <string name="main_activity_title">Stanserhorn Bahn inCabrio</string>
+    <string name="wrong_wifi_settings_activity_title">WLAN EINSTELLUNGEN UNGÜLTIG, ADMINISTRATOR KONTAKTIEREN</string>
+    <string name="action_preferences">Einstellungen</string>
+    <string name="home_button_text"><b>Home</b></string>
+    <string name="dailyMenu_button_text"><b>Menü</b></string>
+    <string name="tripLog_button_text"><b>Frequenzen</b></string>
+    <string name="reservations_button_text"><b>Reservationen</b></string>
+
+    <string name="preferences_reservationLatency_title">Verfallszeit Reservationen</string>
+    <string name="preferences_reservationLatency_summary">Zeit [h] nach Talfahrt in der Reservationen noch angezeigt werden</string>
+    <string name="preferences_reservationLatency_defaultValue">2</string>
+
+    <string name="preferences_automatically_open_addTripLog_title">Fahrten automatisch hinzufügen</string>
+    <string name="preferences_automatically_open_addTripLog_summary_on">Fahrt hinzufügen Dialog wird automatisch geöffnet</string>
+    <string name="preferences_automatically_open_addTripLog_summary_off">Fahrt hinzufügen Dialog wird nicht automatisch geöffnet</string>
+
+    <string name="preferences_unlocked_title">Freischalten</string>
+    <string name="preferences_unlocked_summary_on">Einstellungen sind freigeschaltet</string>
+    <string name="preferences_unlocked_summary_off">Einstellungen sind gesperrt</string>
+    <string name="preferences_unlocker_dialog_title">Bitte Passwort eingeben</string>
+    <string name="preferences_unlocker_dialog_ok">OK</string>
+    <string name="preferences_unlocker_dialog_cancel">Abbrechen</string>
+    <string name="preferences_unlocker_dialog_password">bicbic</string>
+    <string name="preferences_unlocker_dialog_wrong_password_text">Falsches Passwort!</string>
+
+    <string name="preferences_locked_items_title">Einstellungen</string>
+
+    <string name="preferences_cabin_number_title">Kabine</string>
+    <string name="preferences_cabin_number_summary">Kabinennummer</string>
+    <string name="preferences_cabin_number_defaultValue">0</string>
+
+    <string name="preferences_correct_wifi_ssid_title">StHB SSID</string>
+    <string name="preferences_correct_wifi_ssid_defaultValue">eeeeeeeeeeeeeeeeee</string>
+    <string name="preferences_wifi_password_title">StHB WLAN Passwort</string>
+    <string name="preferences_wifi_password_summary">StHB WLAN Passwort</string>
+    <string name="preferences_wifi_password_defaultValue">eeeeeeeeeeeeeeeeeee</string>
+    <string name="preferences_wifi_visible_title">WLAN Sichtbarkeit</string>
+    <string name="preferences_wifi_visible_summary_on">sichtbar</string>
+    <string name="preferences_wifi_visible_summary_off">unsichtbar</string>
+    <string name="preferences_minutes_since_last_sync_before_warning_title">Synchronisations Warnung</string>
+    <string name="preferences_minutes_since_last_sync_before_warning_summary">Zeit [Minuten] ohne Synchronisation, nach der die Verbindungswarnung aktiv wird</string>
+    <string name="preferences_minutes_since_last_sync_before_warning_defaultValue">15</string>
+
+    <string name="preferences_debug_mode_title">Debug Modus</string>
+    <string name="preferences_debug_mode_summary">Debug Meldungen anzeigen</string>
+
+    <string name="preferences_network_polling_interval_title">Download Intervall</string>
+    <string name="preferences_network_polling_interval_summary">Zeit [s] zwischen Datenbank Abfragen</string>
+    <string name="preferences_network_polling_interval_defaultValue">15</string>
+    <string name="preferences_infoboard_url_title">URL zum Infoboard</string>
+    <string name="preferences_infoboard_url_defaultValue">http://cabrio.bictest.ch/CabrioLink/xml_infoboard.php</string>
+    <string name="preferences_dailymenu_url_title">URL zum Menü</string>
+    <string name="preferences_dailymenu_url_defaultValue">http://cabrio.bictest.ch/CabrioLink/xml_menu.php</string>
+    <string name="preferences_triplog_download_title">URL für den Frequenzen Download</string>
+    <string name="preferences_triplog_download_defaultValue">http://cabrio.bictest.ch/CabrioLink/xml_pax.php</string>
+    <string name="preferences_triplog_upload_url_title">URL für den Frequenzen Upload</string>
+    <string name="preferences_triplog_upload_url_defaultValue">http://cabrio.bictest.ch/CabrioLink/triplog.php</string>
+    <string name="preferences_reservations_url_title">URL zu den Reservationen</string>
+    <string name="preferences_reservations_url_defaultValue">http://cabrio.bictest.ch/CabrioLink/xml_reservationen.php</string>
+    <string name="preferences_logfile_listener_url_title">URL für den Logfile Upload Request</string>
+    <string name="preferences_logfile_listener_url_defaultValue">http://cabrio.bictest.ch/CabrioLink/log_mode.php</string>
+    <string name="preferences_logfile_upload_url_title">URL für den Logfile Upload</string>
+    <string name="preferences_logfile_upload_url_defaultValue">http://cabrio.bictest.ch/CabrioLink/errorlog.php</string>
+    <string name="preferences_network_connect_timeout_title">Verbindungs Timeout</string>
+    <string name="preferences_network_connect_timeout_summary">Timeout [s] für das Erstellen der Internetverbindung</string>
+    <string name="preferences_network_connect_timeout_defaultValue">15</string>
+    <string name="preferences_network_connect_read_title">Lese Timeout</string>
+    <string name="preferences_network_connect_read_summary">Timeout [s] für das Lesen der Daten</string>
+    <string name="preferences_network_connect_read_defaultValue">10</string>
+    <string name="preferences_n_sync_log_entries_to_keep_title">Synchronisations Log Länge</string>
+    <string name="preferences_n_sync_log_entries_to_keep_summary">Anzahl der Einträge im Synchronisations Log</string>
+    <string name="preferences_n_sync_log_entries_to_keep_defaultValue">720</string>
+    <string name="preferences_n_sync_log_calls_before_cleaning_title">Häufigkeit Synchronisations Log Bereinigung</string>
+    <string name="preferences_n_sync_log_calls_before_cleaning_summary">Bereinige Synchronisations Log nach dieser Anzahl neuer Einträge</string>
+    <string name="preferences_n_sync_log_calls_before_cleaning_defaultValue">20</string>
+    <string name="preferences_fill_database_with_dummy_values_title">Datenbank füllen</string>
+    <string name="preferences_fill_database_with_dummy_values_summary">Datenbank erstellen und mit dummy Werten füllen</string>
+
+    <string name="preferences_log_level_title">Log Level</string>
+    <string name="preferences_log_level_defaultValue">DEBUG</string>
+    <string name="preferences_log_threshold_for_auto_upload_title">Log Level Schwelle für automatischen Upload</string>
+    <string name="preferences_log_threshold_for_auto_upload_defaultValue">ERROR</string>
+    <string-array name="preferences_loglevel_spinner_choices">
+        <item>Aus</item>
+        <item>DEBUG</item>
+        <item>INFO</item>
+        <item>WARNING</item>
+        <item>ERROR</item>
+        <item>FATAL</item>
+    </string-array>
+
+    <string name="preferences_version_title">Version</string>
+
+    <string name="resevations_number_adults_tag">Erw.:</string>
+    <string name="resevations_number_kids_tag">Kinder:</string>
+    <string name="resevations_number_babies_tag">Babys:</string>
+    <string name="resevations_number_disabled_tag">Rollstuhl:</string>
+
+    <string name="triplog_add_trip_button_text">Fahrt hinzufügen</string>
+    <string name="triplog_add_trip_dialog_title">Neue Fahrt am %s</string>
+    <string name="triplog_add_trip_dialog_ok">OK</string>
+    <string name="triplog_add_trip_dialog_cancel">Abbrechen</string>
+    <string name="triplog_add_trip_tripOfDay_tag">Fahrt Nr.</string>
+    <string name="triplog_add_trip_ascent_tag">Richtung</string>
+    <string name="triplog_add_trip_remarks_tag">Bemerkungen</string>
+    <string name="triplog_add_trip_passengers_tag">Passagiere</string>
+    <string-array name="triplog_add_trip_dialog_ascent_spinner_choices">
+        <item>Talfahrt</item>
+        <item>Bergfahrt</item>
+    </string-array>
+    <string name="triplog_ascent_triangle_description">Bergfahrt</string>
+    <string name="triplog_descent_triangle_description">Bergfahrt</string>
+
+    <string name="triplog_tripOfDay_tag">Fahrt Nr.</string>
+    <string name="triplog_numberPassengers_tag">Passagiere:</string>
+
+    <string name="home_screen_empty_text">Keine aktuellen Infoboard Einträge</string>
+    <string name="dailymenu_sceen_empty_text">Kein Menü</string>
+    <string name="triplog_screen_empty_text">Keine Fahrten</string>
+    <string name="reservations_screen_empty_text">Keine aktuellen Reservationen</string>
+
+    <string name="network_state_dialog_message_wifi_invalid">WLAN Informationen ungültig, Administrator kontaktieren!</string>
+    <string name="network_state_dialog_message_connected">Mit gültigem WLAN Netzwerk verbunden</string>
+    <string name="network_state_dialog_message_sync_in_progress">Synchronisiere mit Server</string>
+    <string name="network_state_dialog_message_not_connected">Keine WLAN Verbindung</string>
+    <string name="network_state_dialog_message_outdated">Letzte Synchronisation liegt lange zurück</string>
+    <string name="network_state_dialog_ok">OK</string>
+</resources>

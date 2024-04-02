@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="navigation_icon_size">52dp</dimen>
+    <dimen name="icon_size">72dp</dimen>
+    <dimen name="small_icon_size">28dp</dimen>
+    <dimen name="rail_elevation">8dp</dimen>
+    <dimen name="medium_padding">21dp</dimen>
+    <dimen name="big_padding">28dp</dimen>
+    <dimen name="large_padding">43dp</dimen>
+    <dimen name="small_padding">14dp</dimen>
+    <dimen name="tiny_margin">7dp</dimen>
+    <dimen name="small_margin">14dp</dimen>
+    <dimen name="medium_margin">21dp</dimen>
+    <dimen name="big_margin">28dp</dimen>
+    <dimen name="radius">14dp</dimen>
+    <dimen name="medium_text_size">21sp</dimen>
+    <dimen name="large_text_size">27sp</dimen>
+    <dimen name="title_text_size">29sp</dimen>
+</resources>

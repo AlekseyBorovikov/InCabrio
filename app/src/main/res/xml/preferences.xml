@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:key="preferences_reservationLatency"
+        android:title="@string/preferences_reservationLatency_title"
+        android:summary="@string/preferences_reservationLatency_summary"
+        android:defaultValue="@string/preferences_reservationLatency_defaultValue" />
+
+    <SwitchPreference
+        android:key="preferences_automatically_open_addTripLog"
+        android:title="@string/preferences_automatically_open_addTripLog_title"
+        android:summaryOn="@string/preferences_automatically_open_addTripLog_summary_on"
+        android:summaryOff="@string/preferences_automatically_open_addTripLog_summary_off"
+        android:defaultValue="false" />
+
+    <SwitchPreference
+        android:key="preferences_unlocked"
+        android:title="@string/preferences_unlocked_title"
+        android:summaryOn="@string/preferences_unlocked_summary_on"
+        android:summaryOff="@string/preferences_unlocked_summary_off"
+        android:defaultValue="false" />
+
+    <PreferenceCategory
+        android:key="preferences_locked_items_category"
+        android:title="@string/preferences_locked_items_title"
+        android:enabled="false">
+
+        <EditTextPreference
+            android:key="preferences_cabin_number"
+            android:title="@string/preferences_cabin_number_title"
+            android:summary="@string/preferences_cabin_number_summary"
+            android:inputType="number"
+            android:defaultValue="0" />
+
+        <EditTextPreference
+            android:key="preferences_correct_wifi_ssid"
+            android:title="@string/preferences_correct_wifi_ssid_title"
+            android:defaultValue="@string/preferences_correct_wifi_ssid_defaultValue" />
+
+        <EditTextPreference
+            android:key="preferences_wifi_password"
+            android:title="@string/preferences_wifi_password_title"
+            android:summary="@string/preferences_wifi_password_summary"
+            android:inputType="textPassword"
+            android:defaultValue="@string/preferences_wifi_password_defaultValue" />
+
+        <SwitchPreference
+            android:key="preferences_wifi_visible"
+            android:title="@string/preferences_wifi_visible_title"
+            android:summaryOn="@string/preferences_wifi_visible_summary_on"
+            android:summaryOff="@string/preferences_wifi_visible_summary_off"
+            android:defaultValue="true" />
+
+        <EditTextPreference
+            android:key="preferences_minutes_since_last_sync_before_warning"
+            android:title="@string/preferences_minutes_since_last_sync_before_warning_title"
+            android:summary="@string/preferences_minutes_since_last_sync_before_warning_summary"
+            android:inputType="number"
+            android:defaultValue="@string/preferences_minutes_since_last_sync_before_warning_defaultValue" />
+
+        <CheckBoxPreference
+            android:key="preferences_debug_mode"
+            android:title="@string/preferences_debug_mode_title"
+            android:summary="@string/preferences_debug_mode_summary"
+            android:defaultValue="false" />
+
+        <EditTextPreference
+            android:key="preferences_network_polling_interval"
+            android:title="@string/preferences_network_polling_interval_title"
+            android:summary="@string/preferences_network_polling_interval_summary"
+            android:inputType="number"
+            android:defaultValue="@string/preferences_network_polling_interval_defaultValue" />
+
+        <EditTextPreference
+            android:key="preferences_infoboard_url"
+            android:title="@string/preferences_infoboard_url_title"
+            android:inputType="textUri"
+            android:defaultValue="@string/preferences_infoboard_url_defaultValue" />
+
+        <EditTextPreference
+            android:key="preferences_dailymenu_url"
+            android:title="@string/preferences_dailymenu_url_title"
+            android:inputType="textUri"
+            android:defaultValue="@string/preferences_dailymenu_url_defaultValue" />
+
+        <EditTextPreference
+            android:key="preferences_triplog_download_url"
+            android:title="@string/preferences_triplog_download_title"
+            android:inputType="textUri"
+            android:defaultValue="@string/preferences_triplog_download_defaultValue" />
+
+        <EditTextPreference
+            android:key="preferences_triplog_upload_url"
+            android:title="@string/preferences_triplog_upload_url_title"
+            android:inputType="textUri"
+            android:defaultValue="@string/preferences_triplog_upload_url_defaultValue" />
+
+        <EditTextPreference
+            android:key="preferences_reservations_url"
+            android:title="@string/preferences_reservations_url_title"
+            android:inputType="textUri"
+            android:defaultValue="@string/preferences_reservations_url_defaultValue" />
+
+        <EditTextPreference
+            android:key="preferences_logfile_listener_url"
+            android:title="@string/preferences_logfile_listener_url_title"
+            android:inputType="textUri"
+            android:defaultValue="@string/preferences_logfile_listener_url_defaultValue" />
+
+        <EditTextPreference
+            android:key="preferences_logfile_upload_url"
+            android:title="@string/preferences_logfile_upload_url_title"
+            android:inputType="textUri"
+            android:defaultValue="@string/preferences_logfile_upload_url_defaultValue" />
+
+        <ListPreference
+            android:key="preferences_log_level"
+            android:title="@string/preferences_log_level_title"
+            android:dialogTitle="@string/preferences_log_level_title"
+            android:entries="@array/preferences_loglevel_spinner_choices"
+            android:entryValues="@array/preferences_loglevel_spinner_choices"
+            android:defaultValue="@string/preferences_log_level_defaultValue" />
+
+        <ListPreference
+            android:key="preferences_log_threshold_for_auto_upload"
+            android:title="@string/preferences_log_threshold_for_auto_upload_title"
+            android:dialogTitle="@string/preferences_log_threshold_for_auto_upload_title"
+            android:entries="@array/preferences_loglevel_spinner_choices"
+            android:entryValues="@array/preferences_loglevel_spinner_choices"
+            android:defaultValue="@string/preferences_log_threshold_for_auto_upload_defaultValue" />
+
+        <EditTextPreference
+            android:key="preferences_n_sync_log_entries_to_keep"
+            android:title="@string/preferences_n_sync_log_entries_to_keep_title"
+            android:summary="@string/preferences_n_sync_log_entries_to_keep_summary"
+            android:inputType="number"
+            android:defaultValue="@string/preferences_n_sync_log_entries_to_keep_defaultValue" />
+
+        <EditTextPreference
+            android:key="preferences_n_sync_log_calls_before_cleaning"
+            android:title="@string/preferences_n_sync_log_calls_before_cleaning_title"
+            android:summary="@string/preferences_n_sync_log_calls_before_cleaning_summary"
+            android:inputType="number"
+            android:defaultValue="@string/preferences_n_sync_log_calls_before_cleaning_defaultValue" />
+
+        <EditTextPreference
+            android:key="preferences_network_connect_timeout"
+            android:title="@string/preferences_network_connect_timeout_title"
+            android:summary="@string/preferences_network_connect_timeout_summary"
+            android:inputType="number"
+            android:defaultValue="@string/preferences_network_connect_timeout_defaultValue" />
+
+        <EditTextPreference
+            android:key="preferences_network_read_timeout"
+            android:title="@string/preferences_network_connect_read_title"
+            android:summary="@string/preferences_network_connect_read_summary"
+            android:inputType="number"
+            android:defaultValue="@string/preferences_network_connect_read_defaultValue" />
+
+        <SwitchPreference
+            android:key="preferences_fill_database_with_dummy_values"
+            android:title="@string/preferences_fill_database_with_dummy_values_title"
+            android:summary="@string/preferences_fill_database_with_dummy_values_summary"
+            android:defaultValue="false" />
+
+    </PreferenceCategory>
+
+    <EditTextPreference
+        android:key="preferences_version"
+        android:title="@string/preferences_version_title"
+        android:summary="@string/global_version"
+        android:enabled="false"
+        android:defaultValue="@string/global_version" />
+
+</androidx.preference.PreferenceScreen>
