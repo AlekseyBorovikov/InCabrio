@@ -113,25 +113,23 @@ class LocaleWifiManager @Inject constructor(
 
         // If Wi-Fi settings are invalid, return false
         if (isWifiSettingsInvalid()) return Logger.w("$TAG: Wifi settings are incorrect")
-        onSuccess()
-//        if (wifiManager?.isWifiEnabled == true) {
-//            val network = connectivityManager.activeNetwork
-//
-//            if (network == null) {
-//                setupDeviceNetwork()
-//                return
-//            }
-//            val networkCapabilities = connectivityManager.getNetworkCapabilities(network) ?: return onError()
-//
-//            // If your device is connected to Wi-Fi
-//            if (!networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-//                Logger.i("$TAG: device is not connected to Wi-Fi")
-//                return onError()
-//            }
-//
-//            onSuccess()
-////            checkCurrentConnectionAndExecuteOrConnect()
-//        } else onError()
+        if (wifiManager?.isWifiEnabled == true) {
+            val network = connectivityManager.activeNetwork
+
+            if (network == null) {
+                setupDeviceNetwork()
+                return
+            }
+            val networkCapabilities = connectivityManager.getNetworkCapabilities(network) ?: return onError()
+
+            // If your device is connected to Wi-Fi
+            if (!networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                Logger.i("$TAG: device is not connected to Wi-Fi")
+                return onError()
+            }
+
+            checkCurrentConnectionAndExecuteOrConnect()
+        } else onError()
     }
 
     // Checks if Wi-Fi settings are valid
