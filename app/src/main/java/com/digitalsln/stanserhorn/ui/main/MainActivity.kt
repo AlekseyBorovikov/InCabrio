@@ -18,13 +18,10 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.digitalsln.stanserhorn.R
-import com.digitalsln.stanserhorn.data.DataUpdateEvent
 import com.digitalsln.stanserhorn.data.WifiConnectionState
 import com.digitalsln.stanserhorn.databinding.ActivityMainBinding
 import com.digitalsln.stanserhorn.tools.Logger
 import com.digitalsln.stanserhorn.ui.trip_log.TripLogFragment
-import com.digitalsln.stanserhorn.ui.trip_log.add_trip_log_dialog.TripLogDialog
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -42,6 +39,7 @@ class MainActivity: AppCompatActivity() {
 
     private var wifiErrorDialog: Dialog? = null
     private var fineLocationAccessDialog: Dialog? = null
+    private var wrongConnectionDialog: Dialog? = null
 
     private var isFineLocationRequestWasShown = false
 
@@ -57,6 +55,12 @@ class MainActivity: AppCompatActivity() {
         if (intent.hasExtra(EXTRA_WIFI_CONNECTION_LOST)) {
             wifiConnectionLostAction()
         }
+
+        wrongConnectionDialog = AlertDialog.Builder(this)
+            .setTitle("Wrong Connection Dialog")
+            .setMessage("You are connected to the wrong network.\nPlease remove the current network from the list of available networks")
+            .setNegativeButton("Close", null)
+            .create()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -117,6 +121,7 @@ class MainActivity: AppCompatActivity() {
                     WifiConnectionState.ShowConnectionError -> showNetworkConnectionErrorDialog()
                     WifiConnectionState.WifiWasConnected,
                     WifiConnectionState.DataWasLoaded -> binding.navigationRail.setStateToConnected()
+                    WifiConnectionState.WrongConnection -> if (wrongConnectionDialog?.isShowing == false) wrongConnectionDialog?.show()
                     else -> binding.navigationRail.setStateToNotConnected()
                 }
             }

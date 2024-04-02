@@ -9,4 +9,5 @@ sealed class WifiConnectionState {
     data object ShowConnectionError: WifiConnectionState()
     data object WifiWasConnected: WifiConnectionState()
     data object Default: WifiConnectionState()
+    data object WrongConnection: WifiConnectionState()
 }

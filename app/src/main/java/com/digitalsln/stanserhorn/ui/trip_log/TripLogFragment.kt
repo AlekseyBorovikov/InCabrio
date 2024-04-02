@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.digitalsln.stanserhorn.base.BaseFragment
 import com.digitalsln.stanserhorn.databinding.FragmentTripLogBinding
-import com.digitalsln.stanserhorn.ui.trip_log.add_trip_log_dialog.TripLogDialog
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

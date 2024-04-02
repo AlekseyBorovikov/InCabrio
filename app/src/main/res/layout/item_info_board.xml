@@ -41,9 +41,10 @@
             android:id="@+id/dateFromBlock"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/big_margin"
             android:orientation="vertical"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/dash">
+            app:layout_constraintEnd_toStartOf="@id/dateToBlock">
 
             <TextView
                 android:text="Von"
@@ -59,17 +60,6 @@
                 tools:text="2024-02-01" />
 
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/dash"
-            android:text="-"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="@dimen/large_padding"
-            android:textAppearance="@style/Text.Medium.Bold"
-            app:layout_constraintTop_toTopOf="@id/dateFromBlock"
-            app:layout_constraintBottom_toBottomOf="@id/dateToBlock"
-            app:layout_constraintEnd_toStartOf="@id/dateToBlock"/>
 
         <LinearLayout
             android:id="@+id/dateToBlock"
