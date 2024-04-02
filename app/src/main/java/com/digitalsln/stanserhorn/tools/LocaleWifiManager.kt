@@ -229,12 +229,14 @@ class LocaleWifiManager @Inject constructor(
         } else {
             val wifiInfo = wifiManager?.connectionInfo
             if (wifiInfo?.supplicantState == SupplicantState.COMPLETED) {
-//                if(!startConnectionToCorrectWifiIfNeed(wifiInfo)) actionOnCorrectWifi?.invoke()
                 val actualSSID = getSsidFromInfo(wifiInfo)
 
                 // If the SSID of the current network does not match the SSID of the network to which the device should be connected, return false
                 if (!isCorrectSsid(actualSSID)) {
                     Logger.w("$TAG: the current ssid does not match what is specified in the settings")
+                    CoroutineScope(Dispatchers.IO).launch {
+                        wifiStateChannel.send(WifiConnectionState.WrongConnection)
+                    }
                     setupDeviceNetwork()
 
                     return

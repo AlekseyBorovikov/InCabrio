@@ -1,4 +1,4 @@
-package com.digitalsln.stanserhorn.ui.trip_log.add_trip_log_dialog
+package com.digitalsln.stanserhorn.ui.trip_log
 
 import android.app.ActionBar.LayoutParams
 import android.app.AlertDialog
