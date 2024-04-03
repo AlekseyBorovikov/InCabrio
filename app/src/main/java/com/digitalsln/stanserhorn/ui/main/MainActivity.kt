@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -22,6 +23,7 @@ import com.digitalsln.stanserhorn.data.WifiConnectionState
 import com.digitalsln.stanserhorn.databinding.ActivityMainBinding
 import com.digitalsln.stanserhorn.tools.Logger
 import com.digitalsln.stanserhorn.ui.trip_log.TripLogFragment
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -39,7 +41,17 @@ class MainActivity: AppCompatActivity() {
 
     private var wifiErrorDialog: Dialog? = null
     private var fineLocationAccessDialog: Dialog? = null
-    private var wrongConnectionDialog: Dialog? = null
+    private val connectionSnackBar: Snackbar by lazy {
+        Snackbar.make(this, binding.navHostFragment, "You are connected to the wrong network. Please remove the current network from the list of available networks", Snackbar.LENGTH_INDEFINITE).apply {
+            // Set Margins
+            val params = view.layoutParams as FrameLayout.LayoutParams
+            val left = binding.navigationRail.width + params.leftMargin
+            params.setMargins(left, params.topMargin, params.rightMargin, params.bottomMargin)
+            view.setLayoutParams(params)
+            // Set Colors
+            setBackgroundTint(this@MainActivity.getColor(R.color.attention_red))
+        }
+    }
 
     private var isFineLocationRequestWasShown = false
 
@@ -56,11 +68,6 @@ class MainActivity: AppCompatActivity() {
             wifiConnectionLostAction()
         }
 
-        wrongConnectionDialog = AlertDialog.Builder(this)
-            .setTitle("Wrong Connection Dialog")
-            .setMessage("You are connected to the wrong network.\nPlease remove the current network from the list of available networks")
-            .setNegativeButton("Close", null)
-            .create()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -110,6 +117,7 @@ class MainActivity: AppCompatActivity() {
                 when(marker) {
                     WifiConnectionState.DataIsLoading -> {
                         binding.navigationRail.setStateToConnectedSyncing()
+                        if (connectionSnackBar.isShown) connectionSnackBar?.dismiss()
                     }
                     WifiConnectionState.LastSyncOutdated -> {
                         binding.navigationRail.setStateToSyncOutdated()
@@ -121,7 +129,7 @@ class MainActivity: AppCompatActivity() {
                     WifiConnectionState.ShowConnectionError -> showNetworkConnectionErrorDialog()
                     WifiConnectionState.WifiWasConnected,
                     WifiConnectionState.DataWasLoaded -> binding.navigationRail.setStateToConnected()
-                    WifiConnectionState.WrongConnection -> if (wrongConnectionDialog?.isShowing == false) wrongConnectionDialog?.show()
+                    WifiConnectionState.WrongConnection -> { if (!connectionSnackBar.isShown) connectionSnackBar?.show() }
                     else -> binding.navigationRail.setStateToNotConnected()
                 }
             }

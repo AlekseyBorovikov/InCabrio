@@ -2,26 +2,19 @@ package com.digitalsln.stanserhorn.tools
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Context.WIFI_SERVICE
-import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
-import android.net.Uri
 import android.net.wifi.SupplicantState
 import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
-import android.net.wifi.WifiNetworkSpecifier
 import android.net.wifi.WifiNetworkSuggestion
 import android.os.Build
-import android.provider.Settings
-import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.digitalsln.stanserhorn.data.PreferenceHelper
@@ -61,9 +54,15 @@ class LocaleWifiManager @Inject constructor(
                 networkCapabilities: NetworkCapabilities
             ) {
                 super.onCapabilitiesChanged(network, networkCapabilities)
-//                if (!startConnectionToCorrectWifiIfNeed(networkCapabilities.transportInfo as WifiInfo?)) actionOnCorrectWifi?.invoke()
-                Logger.d("$TAG: wifi info was got ${networkCapabilities.transportInfo as WifiInfo}")
-                actionOnCorrectWifi?.invoke()
+                val info = networkCapabilities.transportInfo as WifiInfo
+                Logger.d("$TAG: wifi info was got $info")
+                if (!isCorrectSsid(info.ssid)) {
+                    Logger.w("$TAG: the current ssid does not match what is specified in the settings")
+                    CoroutineScope(Dispatchers.IO).launch {
+                        wifiStateChannel.send(WifiConnectionState.WrongConnection)
+                    }
+                    setupDeviceNetwork()
+                } else actionOnCorrectWifi?.invoke()
             }
         }
     } else null

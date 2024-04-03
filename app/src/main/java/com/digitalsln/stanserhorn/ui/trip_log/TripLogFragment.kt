@@ -65,13 +65,4 @@ class TripLogFragment: BaseFragment<FragmentTripLogBinding, TripLogState, TripLo
             adapter.submitList(state.tripLogList)
         }
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        try {
-            dialog.dismiss()
-        } catch (e: IllegalStateException) {
-            Log.e("TripLogFragment", "Error", e)
-        }
-    }
 }

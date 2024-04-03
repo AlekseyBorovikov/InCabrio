@@ -75,7 +75,7 @@ class TripLogRepository @Inject constructor(
                 listToRemove.remove(tripLogEntry.id)
                 val localEntry = TripLogMapper.mapFromRemote(tripLogEntry)
                 if (tripLogEntry.id in allIds) tripLogDao.update(localEntry)
-                else                                   tripLogDao.insert(localEntry)
+                else                           tripLogDao.insert(localEntry)
             }
             // remove other entries
             tripLogDao.deleteByIds(listToRemove)

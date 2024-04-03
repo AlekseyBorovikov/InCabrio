@@ -15,7 +15,7 @@ import com.digitalsln.stanserhorn.data.locale.entries.InternalSynchronizationLog
 import com.digitalsln.stanserhorn.data.locale.entries.ReservationEntry
 import com.digitalsln.stanserhorn.data.locale.entries.TripLogEntry
 
-@Database(entities = [InfoBoardEntry::class, DailyMenuEntry::class, InternalSynchronizationLogEntry::class, ReservationEntry::class, TripLogEntry::class], version = 2, exportSchema = false)
+@Database(entities = [InfoBoardEntry::class, DailyMenuEntry::class, InternalSynchronizationLogEntry::class, ReservationEntry::class, TripLogEntry::class], version = 3, exportSchema = false)
 abstract class ApplicationDatabase : RoomDatabase() {
 
     abstract fun dailyMenuDao(): DailyMenuDao

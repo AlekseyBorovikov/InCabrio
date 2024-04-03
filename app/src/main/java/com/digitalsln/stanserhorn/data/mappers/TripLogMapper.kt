@@ -15,7 +15,7 @@ object TripLogMapper {
 
     fun mapFromRemote(remoteEntry: TripLogEntryRemote)= TripLogEntry(
         globeId = remoteEntry.id,
-        internalId = remoteEntry.internalId,
+        internalId = 0,
         deviceUID = remoteEntry.deviceUID,
         tripOfDay = remoteEntry.tripOfDay,
         cabinNumber = remoteEntry.cabinNumber,
