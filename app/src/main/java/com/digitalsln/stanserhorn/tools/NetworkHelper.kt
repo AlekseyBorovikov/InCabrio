@@ -7,6 +7,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
+import okhttp3.logging.HttpLoggingInterceptor
 import java.io.IOException
 import java.net.MalformedURLException
 import java.util.concurrent.TimeUnit
@@ -17,7 +18,7 @@ class NetworkHelper @Inject constructor(private val preferences: PreferenceHelpe
     private var client: OkHttpClient = createClient()
 
     private fun createClient() = OkHttpClient.Builder()
-//        .addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY })
+        .addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY })
         .connectTimeout(preferences.networkConnectTimeout.toLong(), TimeUnit.SECONDS)
         .readTimeout(preferences.networkReadTimeout.toLong(), TimeUnit.SECONDS)
         .build()
@@ -54,7 +55,7 @@ class NetworkHelper @Inject constructor(private val preferences: PreferenceHelpe
             val response = client.newCall(request).execute()
             try {
                 if (!response.isSuccessful) {
-                    Logger.e("Server response was != 200 (${response.code}).")
+                    Logger.e("Server response was != 200 (${response.code}) to url $urlString.")
                     return@withContext null
                 }
                 return@withContext onSuccess.invoke(response.body)

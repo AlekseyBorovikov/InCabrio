@@ -8,20 +8,12 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MenuInflater
 import android.view.View
-import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.PopupMenu
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.content.ContextCompat
-import androidx.core.view.doOnLayout
-import androidx.core.view.doOnNextLayout
 import androidx.core.view.forEach
 import androidx.core.view.setPadding
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
 import com.digitalsln.stanserhorn.R
 import com.digitalsln.stanserhorn.databinding.ItemMenuRailBinding
 
@@ -37,9 +29,6 @@ class CustomNavigationRailView @JvmOverloads constructor(
             Glide.with(context)
                 .load(R.drawable.state_not_connected)
                 .into(this)
-            setOnClickListener {
-
-            }
         }
     }
 
@@ -121,33 +110,26 @@ class CustomNavigationRailView @JvmOverloads constructor(
     }
 
     fun setStateToNotConnected() {
-
         Glide.with(context)
             .load(R.drawable.state_not_connected)
             .into(statusCard)
-//        statusCard.setImageResource(R.drawable.state_not_connected)
     }
 
     fun setStateToConnected() {
-
         Glide.with(context)
             .load(R.drawable.state_connected)
             .into(statusCard)
-//        statusCard.setImageResource(R.drawable.state_connected)
     }
 
     fun setStateToConnectedSyncing() {
         Glide.with(context)
             .load(R.drawable.state_connected_syncing_arrows)
             .into(statusCard)
-//        statusCard.setImageResource(R.drawable.state_connected_syncing_arrows)
     }
 
     fun setStateToSyncOutdated() {
-
         Glide.with(context)
-            .load(R.drawable.state_not_connected)
+            .load(R.drawable.state_sync_outdated)
             .into(statusCard)
-//        statusCard.setImageResource(R.drawable.state_sync_outdated)
     }
 }

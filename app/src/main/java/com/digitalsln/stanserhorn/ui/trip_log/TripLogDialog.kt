@@ -46,7 +46,7 @@ class TripLogDialog: DialogFragment() {
                 when(tripDialogType) {
                     is TripDialogType.UpdateTripType -> {
                         val tripLogEntry = (tripDialogType as TripDialogType.UpdateTripType).tripLogEntry
-                        setTitle(context?.getString(R.string.triplog_add_trip_dialog_title, tripLogEntry.date))
+                        setTitle(context?.getString(R.string.triplog_update_trip_dialog_title, tripLogEntry.date))
                         setEditData(tripLogEntry)
                     }
                     TripDialogType.AddTripType -> {
@@ -240,58 +240,3 @@ class TripLogDialog: DialogFragment() {
     }
 
 }
-
-//class AddTripLogDialogFragment: DialogFragment() {
-//
-//    private var _binding: DialogAddTripLogBinding? = null
-//    private val binding: DialogAddTripLogBinding get() = _binding!!
-//
-//    private val adapter by lazy {
-//        AddTripLogDialogAdapter(this).apply {
-//            addFragment(DateTimePickFragment())
-//        }
-//    }
-//
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        isCancelable = false
-//    }
-//
-//    override fun onCreateView(
-//        inflater: LayoutInflater,
-//        container: ViewGroup?,
-//        savedInstanceState: Bundle?
-//    ): View {
-//        _binding = DialogAddTripLogBinding.inflate(inflater, container, false)
-//        return binding.root
-//    }
-//
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        super.onViewCreated(view, savedInstanceState)
-//
-//        val calendar: Calendar = GregorianCalendar(TimeZone.getTimeZone("Europe/Berlin"))
-//        val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.GERMANY)
-//        val currentDate = dateFormat.format(calendar.time)
-//
-//        binding.run {
-//            dateValue.text = currentDate
-//
-//            viewPager.adapter = adapter
-//            actionButton.setOnClickListener {
-//                if (binding.viewPager.currentItem != (adapter.itemCount - 1)) binding.viewPager.currentItem += 1
-//                else dismiss()
-//            }
-//            backButton.setOnClickListener {
-//                if (binding.viewPager.currentItem != 0) binding.viewPager.currentItem -= 1
-//                else dismiss()
-//            }
-//            closeButton.setOnClickListener { dismiss() }
-//        }
-//    }
-//
-//    override fun onDestroyView() {
-//        super.onDestroyView()
-//        _binding = null
-//    }
-//
-//}

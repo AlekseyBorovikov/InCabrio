@@ -1,27 +1,26 @@
 package com.digitalsln.stanserhorn.tools
 
 import android.content.Context
-import android.os.Environment
 import android.util.Log
 import com.digitalsln.stanserhorn.R
-import java.io.BufferedWriter
-import java.io.File
-import java.io.FileWriter
-import java.io.IOException
+import com.digitalsln.stanserhorn.tools.ext.writeToFile
+import kotlinx.coroutines.sync.Semaphore
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 class Logger private constructor(private val context: Context) {
 
-    object LogLevel {
-        const val OFF = 999
-        const val DEBUG = 0
-        const val INFO = 1
-        const val WARNING = 2
-        const val ERROR = 3
-        const val FATAL = 4
+    enum class LogLevel(val code: Int) {
+        OFF(-1),
+        DEBUG(0),
+        INFO(1),
+        WARNING(2),
+        ERROR(3),
+        FATAL(4),
     }
+
+    private val s = Semaphore(1)
 
     private var sLogLevel = LogLevel.DEBUG
 
@@ -35,11 +34,20 @@ class Logger private constructor(private val context: Context) {
         private set
 
     companion object {
-        const val LOGFILE_NAME = "inCabrioLog.txt"
+        private const val LOGFILE_NAME = "inCabrioLog"
+
         private var instance: Logger? = null
 
-        fun initialize(context: Context) {
-            instance = Logger(context)
+        fun getFileName(): String {
+            val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+            return "${LOGFILE_NAME}_${sdf.format(Date())}.txt"
+        }
+
+        fun initialize(context: Context, logLevel: String, logLevelThreshold: String) {
+            instance = Logger(context).apply {
+                setLogLevel(logLevel)
+                setLogLevelThreshold(logLevelThreshold)
+            }
         }
 
         fun getInstance(): Logger? {
@@ -61,20 +69,18 @@ class Logger private constructor(private val context: Context) {
         fun f(message: String, e: Throwable) = getInstance()?.log(LogLevel.FATAL, message, e) ?: Unit
     }
 
-    @Synchronized
-    private fun log(level: Int, message: String) {
-        if (level < sLogLevel) return
-
-        logToFile(level, message)
+    private fun log(level: LogLevel, message: String) {
         logToConsole(level, message)
+
+        if (level.code < sLogLevel.code) return
+        logToFile(level, message)
     }
 
-    @Synchronized
-    private fun log(level: Int, message: String, e: Throwable) {
-        if (level < sLogLevel) return
-
-        logToFile(level, message, e)
+    private fun log(level: LogLevel, message: String, e: Throwable) {
         logToConsole(level, message, e)
+
+        if (level.code < sLogLevel.code) return
+        logToFile(level, message, e)
 
         if(level >= sLogLevelThresholdForUpload) {
             log(LogLevel.INFO, "In Logger.log(): Automatic logfile upload requested.")
@@ -82,31 +88,21 @@ class Logger private constructor(private val context: Context) {
         }
     }
 
-    @Synchronized
-    private fun logToFile(level: Int, message: String) {
-        val safeLevel = if (level == LogLevel.OFF) {
-            logToFile(LogLevel.FATAL, "Log level $level invalid.");
-            LogLevel.FATAL
-        } else level
+    private fun logToFile(level: LogLevel, message: String) {
+        if (s.tryAcquire()) {
+            val safeLevel = if (level == LogLevel.OFF) {
+                logToFile(LogLevel.FATAL, "Log level $level invalid.");
+                LogLevel.FATAL
+            } else level
 
-        val logMessage = formatLogMessage(safeLevel, message)
-        try {
-            val root = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
-            val logFile = File(root, LOGFILE_NAME)
-            if (!logFile.exists()) {
-                logFile.createNewFile()
-            }
-            BufferedWriter(FileWriter(logFile, true)).use { writer ->
-                writer.append(logMessage)
-                writer.newLine()
-            }
-        } catch (e: IOException) {
-            Log.e("Logger", "Error writing to log file", e)
+            val logMessage = formatLogMessage(safeLevel, message)
+
+            context.writeToFile(logMessage)
+            s.release()
         }
     }
 
-    @Synchronized
-    private fun logToFile(level: Int, message: String, e: Throwable) {
+    private fun logToFile(level: LogLevel, message: String, e: Throwable) {
         val stackTraces = e.stackTrace
         var messageNew = message + "\n"
         for (i in stackTraces.indices) {
@@ -118,8 +114,7 @@ class Logger private constructor(private val context: Context) {
         logToFile(level, message)
     }
 
-    @Synchronized
-    private fun logToConsole(level: Int, message: String, e: Throwable? = null) {
+    private fun logToConsole(level: LogLevel, message: String, e: Throwable? = null) {
         when (level) {
             LogLevel.DEBUG -> Log.d("Logger", message, e)
             LogLevel.INFO -> Log.i("Logger", message, e)
@@ -132,26 +127,11 @@ class Logger private constructor(private val context: Context) {
         }
     }
 
-//    fun logToConsole(level: Int, message: String, e: Throwable?) {
-//        if (!sLogToAndroid) {
-//            return
-//        }
-//        val tag = "inCabrio"
-//        val logMessage = if (e == null) message else Log.getStackTraceString(e)
-//        when (level) {
-//            LogLevel.DEBUG -> Log.d(tag, logMessage)
-//            LogLevel.INFO -> Log.i(tag, logMessage)
-//            LogLevel.WARNING -> Log.w(tag, logMessage)
-//            LogLevel.ERROR, LogLevel.FATAL -> Log.e(tag, logMessage)
-//        }
-//    }
-
-    private fun formatLogMessage(level: Int, message: String): String {
+    private fun formatLogMessage(level: LogLevel, message: String): String {
         val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
         return "[$timestamp] [$level]: $message"
     }
 
-    @Synchronized
     fun setLogLevel(logLevel: String) {
         val correctLogLevel = convertStringToLoglevel(logLevel)
         if(sLogLevel != correctLogLevel) {
@@ -162,10 +142,9 @@ class Logger private constructor(private val context: Context) {
         }
     }
 
-    @Synchronized
     fun setLogLevelThreshold(logLevelThreshold: String) {
         val correctLogLevel = convertStringToLoglevel(logLevelThreshold)
-        if(sLogLevel > correctLogLevel) {
+        if(sLogLevel.code > correctLogLevel.code) {
             log(LogLevel.INFO, "In Logger.setLogLevelThreshold(): Found treshold for automatic uploading " +
                     "('" + logLevelThreshold + "'). Setting log level to " + logLevelThreshold + ".");
             setLogLevel(logLevelThreshold)
@@ -177,23 +156,11 @@ class Logger private constructor(private val context: Context) {
         }
     }
 
-    private fun convertStringToLoglevel(upperLevelString: String): Int {
-        val levelString = upperLevelString.toUpperCase()
-        return when (levelString) {
-            "DEBUG" -> LogLevel.DEBUG
-            "INFO" -> LogLevel.INFO
-            "WARNING" -> LogLevel.WARNING
-            "ERROR" -> LogLevel.ERROR
-            "FATAL" -> LogLevel.FATAL
-            context.resources.getStringArray(R.array.preferences_loglevel_spinner_choices)[0].toUpperCase() -> LogLevel.OFF
-            else -> {
-                log(LogLevel.ERROR, "In Logger.convertStringToLoglevel(): The String '$levelString' is not a valid log level. Setting log level to INFO")
-                LogLevel.INFO
-            }
-        }
+    private fun convertStringToLoglevel(upperLevelString: String): LogLevel {
+        return LogLevel.valueOf(upperLevelString)
     }
 
-    fun convertLoglevelToString(logLevel: Int): String {
+    fun convertLoglevelToString(logLevel: LogLevel): String {
         return when (logLevel) {
             LogLevel.OFF -> context.resources.getStringArray(R.array.preferences_loglevel_spinner_choices)[0].toUpperCase()
             LogLevel.DEBUG -> "DEBUG"

@@ -66,16 +66,30 @@ class TripLogRepository @Inject constructor(
         } ?: return false
 
         // get all id from table
-        val allIds = tripLogDao.getAllIds()
+        val allEntities = tripLogDao.getAllItem()
+        val allIds = allEntities.map { it.globeId ?: 0 }
         val listToRemove = allIds.toMutableList()
 
         return try {
             // update or insert new entries
             tripLogRemote.entries?.forEach { tripLogEntry ->
-                listToRemove.remove(tripLogEntry.id)
                 val localEntry = TripLogMapper.mapFromRemote(tripLogEntry)
-                if (tripLogEntry.id in allIds) tripLogDao.update(localEntry)
-                else                           tripLogDao.insert(localEntry)
+                listToRemove.removeIf { it == localEntry.globeId }
+                allEntities.find { it.globeId == tripLogEntry.id }?.let { updateEntry ->
+                    tripLogDao.update(
+                        updateEntry.copy(
+                            cabinNumber = localEntry.cabinNumber,
+                            tripOfDay = localEntry.tripOfDay,
+                            date = localEntry.date,
+                            time = localEntry.time,
+                            numberPassengers = localEntry.numberPassengers,
+                            ascent = localEntry.ascent,
+                            remarks = localEntry.remarks,
+                            show = localEntry.show,
+                            updated = localEntry.updated,
+                        )
+                    )
+                } ?: tripLogDao.insert(localEntry)
             }
             // remove other entries
             tripLogDao.deleteByIds(listToRemove)

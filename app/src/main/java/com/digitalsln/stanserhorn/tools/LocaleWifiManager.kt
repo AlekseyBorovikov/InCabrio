@@ -37,9 +37,11 @@ class LocaleWifiManager @Inject constructor(
 
 
 
-
-
     private val wifiManager = context.getSystemService(WIFI_SERVICE) as WifiManager?
+
+    private val request = NetworkRequest.Builder()
+        .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+        .build()
 
     /**
      * This value will only be called for new phones from s/31/And -12 -- Snow Cone
@@ -56,13 +58,9 @@ class LocaleWifiManager @Inject constructor(
                 super.onCapabilitiesChanged(network, networkCapabilities)
                 val info = networkCapabilities.transportInfo as WifiInfo
                 Logger.d("$TAG: wifi info was got $info")
-                if (!isCorrectSsid(info.ssid)) {
-                    Logger.w("$TAG: the current ssid does not match what is specified in the settings")
-                    CoroutineScope(Dispatchers.IO).launch {
-                        wifiStateChannel.send(WifiConnectionState.WrongConnection)
-                    }
-                    setupDeviceNetwork()
-                } else actionOnCorrectWifi?.invoke()
+                executeOnCorrectWifi(info.ssid)
+
+                connectivityManager.unregisterNetworkCallback(this)
             }
         }
     } else null
@@ -73,9 +71,7 @@ class LocaleWifiManager @Inject constructor(
      */
     private val connectivityManager = (context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).apply {
         registerNetworkCallback(
-            NetworkRequest.Builder()
-                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-                .build(),
+            request,
             object : ConnectivityManager.NetworkCallback() {
                 override fun onAvailable(network: Network) {
                     Logger.d("$TAG: available network $network")
@@ -86,9 +82,6 @@ class LocaleWifiManager @Inject constructor(
 
                 override fun onLost(network: Network) {
                     Logger.d("$TAG: lost network $network")
-                    try {
-                        if (getNetworkInfoCallback != null) unregisterNetworkCallback(getNetworkInfoCallback)
-                    } catch (e: Exception) {}
 
                     CoroutineScope(Dispatchers.IO).launch {
                         wifiStateChannel.send(WifiConnectionState.NoConnection)
@@ -132,12 +125,12 @@ class LocaleWifiManager @Inject constructor(
     }
 
     // Checks if Wi-Fi settings are valid
-    fun isWifiSettingsInvalid(): Boolean {
+    private fun isWifiSettingsInvalid(): Boolean {
         // If the SSID is empty or the password is shorter than 8 characters, the settings are considered invalid
         return preference.correctWifiSsid.isEmpty() || preference.wifiPassword.length < MIN_WIFI_PASSWORD_CORRECT_LENGTH
     }
 
-    fun createRequestConnectToCorrectWifiNetwork() {
+    private fun createRequestConnectToCorrectWifiNetwork() {
         // Check Wi-Fi settings
         if (isWifiSettingsInvalid()) { return }
 
@@ -217,33 +210,22 @@ class LocaleWifiManager @Inject constructor(
      * must be called when permission is granted ..
      * @see [https://developer.android.com/reference/kotlin/android/net/wifi/WifiManager#getConnectionInfo()]
      */
-    private fun checkCurrentConnectionAndExecuteOrConnect() {
+    fun checkCurrentConnectionAndExecuteOrConnect() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val request = NetworkRequest.Builder()
-                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-                .build()
-
-            Logger.i("$TAG: create a request for information about Wi-Fi (api version 31 and higher)")
-            connectivityManager.registerNetworkCallback(request, getNetworkInfoCallback ?: return)
+            registerNetworkCallback()
         } else {
             val wifiInfo = wifiManager?.connectionInfo
             if (wifiInfo?.supplicantState == SupplicantState.COMPLETED) {
                 val actualSSID = getSsidFromInfo(wifiInfo)
-
-                // If the SSID of the current network does not match the SSID of the network to which the device should be connected, return false
-                if (!isCorrectSsid(actualSSID)) {
-                    Logger.w("$TAG: the current ssid does not match what is specified in the settings")
-                    CoroutineScope(Dispatchers.IO).launch {
-                        wifiStateChannel.send(WifiConnectionState.WrongConnection)
-                    }
-                    setupDeviceNetwork()
-
-                    return
-                }
-
-                actionOnCorrectWifi?.invoke()
+                executeOnCorrectWifi(actualSSID)
             }
         }
+    }
+
+    private fun registerNetworkCallback() {
+        Logger.i("$TAG: create a request for information about Wi-Fi (api version 31 and higher)")
+        if (getNetworkInfoCallback == null) return
+        connectivityManager.registerNetworkCallback(request, getNetworkInfoCallback)
     }
 
     private fun setupDeviceNetwork() {
@@ -259,7 +241,6 @@ class LocaleWifiManager @Inject constructor(
                 val networkSuggestion = wifiManager?.networkSuggestions?.firstOrNull()
                 if (networkSuggestion?.ssid != preference.correctWifiSsid || networkSuggestion.passphrase != preference.wifiPassword) {
                     createRequestConnectToCorrectWifiNetwork()
-//                    wifiStateChannel.send(WifiConnectionState.ShowNeedConnectMessage)
                 }
             }
         }
@@ -304,14 +285,14 @@ class LocaleWifiManager @Inject constructor(
     }
 
     private fun checkFineLocation(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
             ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-        } else true
+        else false
     }
 
     private fun requestScanNetwork() {
 
-        val wifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val wifiManager = context.getSystemService(WIFI_SERVICE) as WifiManager
         val executor = ContextCompat.getMainExecutor(context)
         val callback = object : WifiManager.ScanResultsCallback() {
             override fun onScanResultsAvailable() {
@@ -322,4 +303,24 @@ class LocaleWifiManager @Inject constructor(
 
     }
 
+    private fun isUnknownSsid(actualSsid: String) = actualSsid.contains("<unknown ssid>")
+
+    private fun executeOnCorrectWifi(actualSsid: String) {
+        Logger.d("$TAG: try execute with actual ssid: $actualSsid")
+        if(isUnknownSsid(actualSsid)) {
+            Logger.w("$TAG: The app couldn't read ssid")
+            return
+        }
+
+        if (!isCorrectSsid(actualSsid)) {
+            Logger.w("$TAG: the current ssid does not match what is specified in the settings")
+            CoroutineScope(Dispatchers.IO).launch {
+                wifiStateChannel.send(WifiConnectionState.WrongConnection)
+            }
+            setupDeviceNetwork()
+        } else {
+            Logger.d("$TAG: actual ssid is correct, execute success function")
+            actionOnCorrectWifi?.invoke()
+        }
+    }
 }

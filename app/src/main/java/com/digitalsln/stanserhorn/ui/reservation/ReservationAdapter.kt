@@ -2,7 +2,6 @@ package com.digitalsln.stanserhorn.ui.reservation
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -49,10 +48,13 @@ class ReservationAdapter : ListAdapter<ReservationEntry, ReservationAdapter.Rese
 
         fun onBind(item: ReservationEntry) {
             binding.run {
-                Glide.with(root.context)
-                    .load(getDrawableForTicketColorString(item.ticketColor))
-                    .circleCrop()
-                    .into(marker)
+                val colorDrawable = getDrawableForTicketColorString(item.ticketColor)
+                if (colorDrawable > -1) {
+                    Glide.with(root.context)
+                        .load(colorDrawable)
+                        .circleCrop()
+                        .into(marker)
+                }
 
                 val ascent = if ((item.id % 2).toInt() == 0) true else false
                 destinationImg.setImageResource(if (ascent) R.drawable.ic_ascent_arrow else R.drawable.ic_descent_arrow)
@@ -82,25 +84,19 @@ class ReservationAdapter : ListAdapter<ReservationEntry, ReservationAdapter.Rese
         }
 
         private fun getDrawableForTicketColorString(ticketColorString: String): Int {
-            return if (ticketColorString == "keine") {
-                -1
-            } else if (ticketColorString == "blau") {
-                R.drawable.ticket_blau
-            } else if (ticketColorString == "blau-weiss") {
-                R.drawable.ticket_blauweiss
-            } else if (ticketColorString == "braun") {
-                R.drawable.ticket_braun
-            } else if (ticketColorString == "gelb") {
-                R.drawable.ticket_gelb
-            } else if (ticketColorString == "lila") {
-                R.drawable.ticket_lila
-            } else if (ticketColorString == "orange") {
-                R.drawable.ticket_orange
-            } else if (ticketColorString == "weiss") {
-                R.drawable.ticket_weiss
-            } else {
-                Logger.e("In ReservationAdapter: Cannot find ticket color drawable for ticket color string '$ticketColorString'.")
-                -1
+            return when (ticketColorString) {
+                "keine" -> -1
+                "blau" -> R.drawable.ticket_blau
+                "blau-weiss" -> R.drawable.ticket_blauweiss
+                "braun" -> R.drawable.ticket_braun
+                "gelb" -> R.drawable.ticket_gelb
+                "lila" -> R.drawable.ticket_lila
+                "orange" -> R.drawable.ticket_orange
+                "weiss" -> R.drawable.ticket_weiss
+                else -> {
+                    Logger.e("In ReservationAdapter: Cannot find ticket color drawable for ticket color string '$ticketColorString'.")
+                    -1
+                }
             }
         }
     }

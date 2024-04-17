@@ -42,7 +42,7 @@ class MainActivity: AppCompatActivity() {
     private var wifiErrorDialog: Dialog? = null
     private var fineLocationAccessDialog: Dialog? = null
     private val connectionSnackBar: Snackbar by lazy {
-        Snackbar.make(this, binding.navHostFragment, "You are connected to the wrong network. Please remove the current network from the list of available networks", Snackbar.LENGTH_INDEFINITE).apply {
+        Snackbar.make(this, binding.navHostFragment, "Falsches WLAN verbunden. Bitte mit ${viewModel.getCorrectWifiName()} verbinden", Snackbar.LENGTH_INDEFINITE).apply {
             // Set Margins
             val params = view.layoutParams as FrameLayout.LayoutParams
             val left = binding.navigationRail.width + params.leftMargin
@@ -100,8 +100,9 @@ class MainActivity: AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+
         // ask permissions
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION)
             } else fineLocationAccessDialog?.dismiss()
@@ -111,13 +112,18 @@ class MainActivity: AppCompatActivity() {
             } else wifiErrorDialog?.dismiss()
         }
 
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q)
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1000003)
+            }
+
         lifecycleScope.launch {
             viewModel.uiState.collect { state ->
                 val marker = state.wifiState
                 when(marker) {
                     WifiConnectionState.DataIsLoading -> {
                         binding.navigationRail.setStateToConnectedSyncing()
-                        if (connectionSnackBar.isShown) connectionSnackBar?.dismiss()
+                        if (connectionSnackBar.isShown) connectionSnackBar.dismiss()
                     }
                     WifiConnectionState.LastSyncOutdated -> {
                         binding.navigationRail.setStateToSyncOutdated()
@@ -129,21 +135,34 @@ class MainActivity: AppCompatActivity() {
                     WifiConnectionState.ShowConnectionError -> showNetworkConnectionErrorDialog()
                     WifiConnectionState.WifiWasConnected,
                     WifiConnectionState.DataWasLoaded -> binding.navigationRail.setStateToConnected()
-                    WifiConnectionState.WrongConnection -> { if (!connectionSnackBar.isShown) connectionSnackBar?.show() }
+                    WifiConnectionState.WrongConnection -> { if (!connectionSnackBar.isShown) connectionSnackBar.show() }
                     else -> binding.navigationRail.setStateToNotConnected()
                 }
             }
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        wifiErrorDialog?.dismiss()
+        fineLocationAccessDialog?.dismiss()
+        wifiErrorDialog = null
+        fineLocationAccessDialog = null
+    }
+
+//    preferenceHelper.debug
+
     private fun wifiConnectionLostAction() {
         Logger.i("In MainActivity.wifiConnectionLostAction: Received intent, opening AddTripLogDialogFragment.")
-        val notificationSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val ringtone = RingtoneManager.getRingtone(this, notificationSoundUri)
-        ringtone.play()
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        navHostFragment.navController.navigate(R.id.guests, bundleOf(Pair(TripLogFragment.OPEN_DIALOG_KEY, true)))
+        if(viewModel.canNavigateWhenWifiLost()) {
+            val notificationSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+            val ringtone = RingtoneManager.getRingtone(this, notificationSoundUri)
+            ringtone.play()
+
+            val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+            navHostFragment.navController.navigate(R.id.guests, bundleOf(Pair(TripLogFragment.OPEN_DIALOG_KEY, true)))
+        }
     }
 
     private fun showNetworkConnectionErrorDialog() {
@@ -156,13 +175,4 @@ class MainActivity: AppCompatActivity() {
             .create()
         wifiErrorDialog?.show()
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        wifiErrorDialog?.dismiss()
-        fineLocationAccessDialog?.dismiss()
-        wifiErrorDialog = null
-        fineLocationAccessDialog = null
-    }
-
 }
