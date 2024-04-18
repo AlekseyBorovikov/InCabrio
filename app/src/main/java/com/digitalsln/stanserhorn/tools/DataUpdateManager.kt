@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Environment
 import android.os.Looper
 import android.provider.Settings
-import android.util.Log
 import android.widget.Toast
 import com.digitalsln.stanserhorn.data.PreferenceHelper
 import com.digitalsln.stanserhorn.data.WifiConnectionState
@@ -31,6 +30,7 @@ class DataUpdateManager @Inject constructor(
     private val reservationRepository: ReservationRepository,
     private val internalLogRepository: InternalLogRepository,
     private val preferenceHelper: PreferenceHelper,
+    private val debugManager: DebugManager,
 ) {
 
     companion object {
@@ -51,12 +51,6 @@ class DataUpdateManager @Inject constructor(
 
                 Logger.d("$TAG: DataUpdateManager starting.")
 
-                if(preferenceHelper.debug) {
-                    mHandler.post {
-                        Toast.makeText(context, "DataUpdateManager started", Toast.LENGTH_SHORT).show()
-                    }
-                }
-
                 wifiManager.doOnCorrectWifiNetwork(
                     onSuccess = { updateDataFromServer() },
                     onError = {
@@ -73,11 +67,19 @@ class DataUpdateManager @Inject constructor(
                 )
 
             }, 0, interval, TimeUnit.SECONDS)
-        }
+        } else Logger.e("$TAG: executorService is null. DataUpdateManager wasn't started")
     }
 
     private fun updateDataFromServer() {
-        Log.d(TAG, "start update data action")
+        Logger.d("$TAG: start update data action")
+
+        if(preferenceHelper.debug) {
+            val count = debugManager.incrementSynchronizationCount()
+            mHandler.post {
+                Toast.makeText(context, "Synchronization in debug mode was called $count times", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 wifiStateChannel.send(WifiConnectionState.DataIsLoading)
@@ -120,16 +122,18 @@ class DataUpdateManager @Inject constructor(
                 }
 
                 internalLogRepository.putLog(allSynchronizationsSucceeded)
-
-                Log.d(TAG, "update data was finished")
-                wifiStateChannel.send(WifiConnectionState.DataWasLoaded)
             } catch (e: Exception) {
+                Logger.e("$TAG: error when try to sync", e)
                 e.printStackTrace()
+            } finally {
+                Logger.d("$TAG: update data was finished")
+                wifiStateChannel.send(WifiConnectionState.DataWasLoaded)
             }
         }
     }
 
     fun stop() {
+        Logger.d("$TAG: stop")
         if (executorService != null) {
             executorService?.shutdown()
             executorService = null
@@ -137,6 +141,7 @@ class DataUpdateManager @Inject constructor(
     }
 
     fun restart() {
+        Logger.d("$TAG: restart")
         stop()
         start()
     }

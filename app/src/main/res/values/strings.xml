@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Stanserhorn</string>
     <string name="global_app_name">inCabrio</string>
-    <string name="global_version">2.0</string>
+    <string name="global_version">3</string>
 
     <string name="main_activity_title">Stanserhorn Bahn inCabrio</string>
     <string name="wrong_wifi_settings_activity_title">WLAN EINSTELLUNGEN UNGÜLTIG, ADMINISTRATOR KONTAKTIEREN</string>
@@ -35,7 +35,7 @@
     <string name="preferences_cabin_number_defaultValue">0</string>
 
     <string name="preferences_correct_wifi_ssid_title">StHB SSID</string>
-    <string name="preferences_correct_wifi_ssid_defaultValue">eeeeeeeeeeeeeeeeee</string>
+    <string name="preferences_correct_wifi_ssid_defaultValue">wl01s</string>
     <string name="preferences_wifi_password_title">StHB WLAN Passwort</string>
     <string name="preferences_wifi_password_summary">StHB WLAN Passwort</string>
     <string name="preferences_wifi_password_defaultValue">eeeeeeeeeeeeeeeeeee</string>
@@ -44,7 +44,7 @@
     <string name="preferences_wifi_visible_summary_off">unsichtbar</string>
     <string name="preferences_minutes_since_last_sync_before_warning_title">Synchronisations Warnung</string>
     <string name="preferences_minutes_since_last_sync_before_warning_summary">Zeit [Minuten] ohne Synchronisation, nach der die Verbindungswarnung aktiv wird</string>
-    <string name="preferences_minutes_since_last_sync_before_warning_defaultValue">15</string>
+    <string name="preferences_minutes_since_last_sync_before_warning_defaultValue">60</string>
 
     <string name="preferences_debug_mode_title">Debug Modus</string>
     <string name="preferences_debug_mode_summary">Debug Meldungen anzeigen</string>
@@ -53,19 +53,19 @@
     <string name="preferences_network_polling_interval_summary">Zeit [s] zwischen Datenbank Abfragen</string>
     <string name="preferences_network_polling_interval_defaultValue">15</string>
     <string name="preferences_infoboard_url_title">URL zum Infoboard</string>
-    <string name="preferences_infoboard_url_defaultValue">http://cabrio.bictest.ch/CabrioLink/xml_infoboard.php</string>
+    <string name="preferences_infoboard_url_defaultValue">https://resi.cabrio.ch/CabrioLink/xml_infoboard.php</string>
     <string name="preferences_dailymenu_url_title">URL zum Menü</string>
-    <string name="preferences_dailymenu_url_defaultValue">http://cabrio.bictest.ch/CabrioLink/xml_menu.php</string>
+    <string name="preferences_dailymenu_url_defaultValue">https://resi.cabrio.ch/CabrioLink/xml_menu.php</string>
     <string name="preferences_triplog_download_title">URL für den Frequenzen Download</string>
-    <string name="preferences_triplog_download_defaultValue">http://cabrio.bictest.ch/CabrioLink/xml_pax.php</string>
+    <string name="preferences_triplog_download_defaultValue">https://resi.cabrio.ch/CabrioLink/xml_pax.php</string>
     <string name="preferences_triplog_upload_url_title">URL für den Frequenzen Upload</string>
-    <string name="preferences_triplog_upload_url_defaultValue">http://cabrio.bictest.ch/CabrioLink/triplog.php</string>
+    <string name="preferences_triplog_upload_url_defaultValue">https://resi.cabrio.ch/CabrioLink/triplog.php</string>
     <string name="preferences_reservations_url_title">URL zu den Reservationen</string>
-    <string name="preferences_reservations_url_defaultValue">http://cabrio.bictest.ch/CabrioLink/xml_reservationen.php</string>
+    <string name="preferences_reservations_url_defaultValue">https://resi.cabrio.ch/CabrioLink/xml_reservationen.php</string>
     <string name="preferences_logfile_listener_url_title">URL für den Logfile Upload Request</string>
-    <string name="preferences_logfile_listener_url_defaultValue">http://cabrio.bictest.ch/CabrioLink/log_mode.php</string>
+    <string name="preferences_logfile_listener_url_defaultValue">https://resi.cabrio.ch/CabrioLink/log_mode.php</string>
     <string name="preferences_logfile_upload_url_title">URL für den Logfile Upload</string>
-    <string name="preferences_logfile_upload_url_defaultValue">http://cabrio.bictest.ch/CabrioLink/errorlog.php</string>
+    <string name="preferences_logfile_upload_url_defaultValue">https://resi.cabrio.ch/CabrioLink/errorlog.php</string>
     <string name="preferences_network_connect_timeout_title">Verbindungs Timeout</string>
     <string name="preferences_network_connect_timeout_summary">Timeout [s] für das Erstellen der Internetverbindung</string>
     <string name="preferences_network_connect_timeout_defaultValue">15</string>
@@ -103,6 +103,7 @@
 
     <string name="triplog_add_trip_button_text">Fahrt hinzufügen</string>
     <string name="triplog_add_trip_dialog_title">Neue Fahrt am %s</string>
+    <string name="triplog_update_trip_dialog_title">Fahrt ändern am %s</string>
     <string name="triplog_add_trip_dialog_ok">OK</string>
     <string name="triplog_add_trip_dialog_cancel">Abbrechen</string>
     <string name="triplog_add_trip_tripOfDay_tag">Fahrt Nr.</string>

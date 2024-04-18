@@ -9,6 +9,7 @@ import com.digitalsln.stanserhorn.repositoies.ReservationRepository
 import com.digitalsln.stanserhorn.repositoies.TripLogRepository
 import com.digitalsln.stanserhorn.tools.DataUpdateChannel
 import com.digitalsln.stanserhorn.tools.DataUpdateManager
+import com.digitalsln.stanserhorn.tools.DebugManager
 import com.digitalsln.stanserhorn.tools.LocaleWifiManager
 import com.digitalsln.stanserhorn.tools.NetworkHelper
 import com.digitalsln.stanserhorn.tools.WifiStateChannel
@@ -51,6 +52,7 @@ class NetworkModule {
         tripLogRepository: TripLogRepository,
         reservationRepository: ReservationRepository,
         internalLogRepository: InternalLogRepository,
+        debugManager: DebugManager,
     ) = DataUpdateManager(
         context = context,
         wifiStateChannel = wifiStateChannel,
@@ -61,6 +63,7 @@ class NetworkModule {
         reservationRepository = reservationRepository,
         preferenceHelper = preferenceHelper,
         internalLogRepository = internalLogRepository,
+        debugManager = debugManager,
     )
 
     @Singleton

@@ -7,6 +7,7 @@ import com.digitalsln.stanserhorn.repositoies.InfoBoardRepository
 import com.digitalsln.stanserhorn.repositoies.ReservationRepository
 import com.digitalsln.stanserhorn.repositoies.TripLogRepository
 import com.digitalsln.stanserhorn.tools.DataUpdateManager
+import com.digitalsln.stanserhorn.tools.LocaleWifiManager
 import com.digitalsln.stanserhorn.tools.NetworkHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -20,6 +21,7 @@ class PreferenceViewModel @Inject constructor(
     private val infoBoardRepository: InfoBoardRepository,
     private val dataUpdateManager: DataUpdateManager,
     private val networkHelper: NetworkHelper,
+    private val wifiManager: LocaleWifiManager,
 ): ViewModel() {
 
     fun fillDummyData() = viewModelScope.launch {
@@ -40,6 +42,10 @@ class PreferenceViewModel @Inject constructor(
 
     fun updateLoadInterval() {
         dataUpdateManager.restart()
+    }
+
+    fun checkCurrentsSsid() {
+      wifiManager.checkCurrentConnectionAndExecuteOrConnect()
     }
 
 }

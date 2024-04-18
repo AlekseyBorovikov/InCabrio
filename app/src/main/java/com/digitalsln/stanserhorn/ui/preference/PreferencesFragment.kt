@@ -31,7 +31,7 @@ class PreferencesFragment: PreferenceFragmentCompat(), OnSharedPreferenceChangeL
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Logger.d("In PreferencesFragment.onCreate: Preferences created.");
+        Logger.d("In PreferencesFragment.onCreate: Preferences created.")
 
         findPreference<EditTextPreference>(PreferenceHelper.PreferenceVariable.KEY_RESERVATION_LATENCY)?.summary = "${resources.getString(R.string.preferences_reservationLatency_summary)} (${preferences.reservationLatency} h)"
         // Set the text of the cabin number preferenceGhb
@@ -93,6 +93,10 @@ class PreferencesFragment: PreferenceFragmentCompat(), OnSharedPreferenceChangeL
             PreferenceHelper.PreferenceVariable.KEY_CORRECT_WIFI_SSID -> {
                 // Set the text of the StHB SSID preference
                 findPreference<EditTextPreference>(key)?.summary = preferences.correctWifiSsid
+                viewModel.checkCurrentsSsid()
+            }
+            PreferenceHelper.PreferenceVariable.KEY_WIFI_PASSWORD -> {
+                viewModel.checkCurrentsSsid()
             }
             PreferenceHelper.PreferenceVariable.KEY_MINUTES_SINCE_LAST_SYNC_BEFORE_WARNING -> {
                 // Set the text for the minutes since last sync before warning

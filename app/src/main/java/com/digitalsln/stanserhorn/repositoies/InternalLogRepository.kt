@@ -73,11 +73,11 @@ class InternalLogRepository @Inject constructor(
             val syncDateTime: Date? = try {
                 dateFormat.parse(successLog.syncDate + " " + successLog.syncTime)
             } catch (e: ParseException) {
-                Logger.e("In InternalLogRepository: Could not parse date string '" + successLog.syncDate + " " + successLog.syncTime + "'.", e);
+                Logger.e("In InternalLogRepository: Could not parse date string '" + successLog.syncDate + " " + successLog.syncTime + "'.", e)
                 return null
             }
             if(latestDateTime == null || syncDateTime?.after(latestDateTime) == true) {
-                latestDateTime = syncDateTime;
+                latestDateTime = syncDateTime
                 retval = successLog
             }
         }
@@ -124,7 +124,7 @@ class InternalLogRepository @Inject constructor(
         val responseString = networkHelper.fetchDataFromURL(logfileRequestUrl) { it }
 
         if (responseString == null) {
-            Logger.e("In InternalLogRepository: Could not convert InputStream to String.")
+//            Logger.e("In InternalLogRepository: Could not convert InputStream to String.")
             return RETURN_VALUE_IN_CASE_OF_ERROR
         }
 
@@ -153,9 +153,7 @@ class InternalLogRepository @Inject constructor(
                     -5 -> Logger.LogLevel.ERROR
                     -6 -> Logger.LogLevel.FATAL
                     else -> {
-                        Logger.e("In InternalLogRepository: Server " +
-                                "requested invalid log level ${-1 * serverResponseCode}, set log level to INFO."
-                        )
+                        Logger.e("In InternalLogRepository: Server requested invalid log level ${-1 * serverResponseCode}, set log level to INFO.")
                         Logger.LogLevel.INFO
                     }
                 }
@@ -172,18 +170,18 @@ class InternalLogRepository @Inject constructor(
             if (result) {
                 Log.i("Logger", "Log file upload completed successfully.")
             } else {
-                Log.e("Logger", "Log file upload failed.")
+//                Log.e("Logger", "Log file upload failed.")
             }
         } catch (e: Exception) {
-            Log.e("Logger", "Log file upload failed.", e)
+//            Log.e("Logger", "Log file upload failed.", e)
         }
     }
 
     private suspend fun uploadLogFile(deviceUID: String, rootStorage: File?): Boolean = withContext(Dispatchers.IO) {
-        val logFile = File(rootStorage, Logger.LOGFILE_NAME)
+        val logFile = File(rootStorage, Logger.getFileName())
 
         if (!logFile.isFile) {
-            Logger.e("In InternalLogRepository: Could not open log file for uploading.")
+//            Logger.e("In InternalLogRepository: Could not open log file for uploading.")
             return@withContext false
         }
 
