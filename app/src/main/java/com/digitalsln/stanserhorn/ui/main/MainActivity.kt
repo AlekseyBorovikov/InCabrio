@@ -101,6 +101,8 @@ class MainActivity: AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
+        viewModel.startDataUpdateManager()
+
         // ask permissions
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -140,6 +142,11 @@ class MainActivity: AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.stopDataUpdateManager()
     }
 
     override fun onDestroy() {

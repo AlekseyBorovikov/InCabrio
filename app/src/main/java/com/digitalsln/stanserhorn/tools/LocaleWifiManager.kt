@@ -223,7 +223,7 @@ class LocaleWifiManager @Inject constructor(
     }
 
     private fun registerNetworkCallback() {
-        Logger.i("$TAG: create a request for information about Wi-Fi (api version 31 and higher)")
+        Logger.d("$TAG: create a request for information about Wi-Fi (api version 31 and higher)")
         if (getNetworkInfoCallback == null) return
         connectivityManager.registerNetworkCallback(request, getNetworkInfoCallback)
     }

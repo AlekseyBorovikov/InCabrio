@@ -22,27 +22,35 @@ interface TripLogDao {
     @Update
     fun update(tripLogEntry: TripLogEntry): Int
 
-    @Query("SELECT * FROM trip_log")
-    suspend fun getAllItem(): List<TripLogEntry>
-
-    @Query("SELECT * FROM trip_log WHERE show = 1 AND cabinNumber=:cabinNumber ORDER BY date DESC, tripOfDay DESC")
-    suspend fun getAllShowItem(cabinNumber: String): List<TripLogEntry>
-
-    @Query("SELECT globeId FROM trip_log")
-    suspend fun getAllIds(): List<Int>
-
-    @Query("SELECT * FROM trip_log WHERE show=:show AND cabinNumber=:cabinNumber ORDER BY tripOfDay DESC")
-    suspend fun getTripLogsByShow(show: Boolean, cabinNumber: String): List<TripLogEntry>
-
-    @Query("SELECT * FROM trip_log WHERE cabinNumber=:cabinNumber ORDER BY date DESC, tripOfDay DESC")
-    suspend fun getTripLogsSortedByDate(cabinNumber: String): List<TripLogEntry>
-
-    @Query("SELECT * FROM trip_log WHERE globeId is null or updated = 1")
-    suspend fun getCreatedOrUpdated(): List<TripLogEntry>
-
     @Query("DELETE FROM trip_log")
     suspend fun deleteAll()
 
     @Query("DELETE FROM trip_log WHERE globeId IN (:ids)")
     suspend fun deleteByIds(ids: List<Int>)
+
+    @Query("SELECT * FROM trip_log")
+    suspend fun getAllItem(): List<TripLogEntry>
+
+    @Query("SELECT globeId FROM trip_log")
+    suspend fun getAllIds(): List<Int>
+
+    @Query("SELECT * FROM trip_log WHERE globeId is null or updated = 1")
+    suspend fun getCreatedOrUpdated(): List<TripLogEntry>
+
+    // sorted by time
+
+    @Query("SELECT * FROM trip_log WHERE time > :time AND cabinNumber=:cabinNumber ORDER BY time DESC, tripOfDay DESC")
+    suspend fun getAllShowItem(cabinNumber: String, time: Long): List<TripLogEntry>
+
+    @Query("SELECT * FROM trip_log WHERE time > :time AND cabinNumber=:cabinNumber ORDER BY tripOfDay DESC")
+    suspend fun getTripLogsByShow(cabinNumber: String, time: Long): List<TripLogEntry>
+
+    @Query("SELECT * FROM trip_log WHERE cabinNumber=:cabinNumber AND time > :time ORDER BY time DESC, tripOfDay DESC")
+    suspend fun getTripLogsSortedByDate(cabinNumber: String, time: Long): List<TripLogEntry>
+
+    @Query("SELECT sum(numberPassengers) FROM trip_log WHERE ascent = 1 AND time > :time")
+    suspend fun getAscentNumber(time: Long): Int?
+
+    @Query("SELECT sum(numberPassengers) FROM trip_log WHERE ascent = 0 AND time > :time")
+    suspend fun getDescentNumber(time: Long): Int?
 }

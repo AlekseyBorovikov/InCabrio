@@ -12,6 +12,7 @@ object DateUtils {
     private val dateFormatBuilder = SimpleDateFormat("dd.MM.", Locale.GERMANY)
     private val timeFormatParser = SimpleDateFormat("HH:mm:ss", Locale.GERMANY)
     private val timeFormatBuilder = SimpleDateFormat("HH:mm", Locale.GERMANY)
+    private val datetimeFormatParser = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.GERMANY)
 
     fun shortenDate(dateString: String): String {
         return try {
@@ -51,4 +52,33 @@ object DateUtils {
         return date == nowDate
     }
 
+    fun convertTimeFromFrom(dateTime: String): Date = kotlin.runCatching {
+        datetimeFormatParser.parse(dateTime)
+    }.onFailure { e ->
+        Logger.e("Could not parse date string '$dateTime'.", e)
+    }.getOrThrow() as Date
+
+    fun formatDateToServerDateString(date: Date) = dateFormatParser.format(date)
+    fun formatDateToServerTimeString(date: Date) = timeFormatParser.format(date)
+
+    fun getTimeStartForTripLog(): Long {
+        val calendar = Calendar.getInstance()
+        if (calendar.get(Calendar.HOUR_OF_DAY) < 3) {
+            calendar.add(Calendar.DAY_OF_MONTH, -1)
+        }
+        calendar.set(Calendar.MILLISECOND, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.HOUR_OF_DAY, 3)
+        return calendar.timeInMillis
+    }
+
+    fun getStartOfCurrentDayTime(): Long {
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.MILLISECOND, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        return calendar.timeInMillis
+    }
 }

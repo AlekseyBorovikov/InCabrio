@@ -53,7 +53,9 @@
     <string name="preferences_network_polling_interval_summary">Zeit [s] zwischen Datenbank Abfragen</string>
     <string name="preferences_network_polling_interval_defaultValue">15</string>
     <string name="preferences_infoboard_url_title">URL zum Infoboard</string>
-    <string name="preferences_infoboard_url_defaultValue">https://resi.cabrio.ch/CabrioLink/xml_infoboard.php</string>
+    <!--    BaseURL: http://resi.cabrio.ch/CabrioLink-->
+    <!--    BaseTestURL: http://cabrio.bictest.ch/CabrioLink-->
+    <string name="preferences_infoboard_url_defaultValue">http://cabrio.bictest.ch/CabrioLink/xml_infoboard.php</string>
     <string name="preferences_dailymenu_url_title">URL zum Menü</string>
     <string name="preferences_dailymenu_url_defaultValue">https://resi.cabrio.ch/CabrioLink/xml_menu.php</string>
     <string name="preferences_triplog_download_title">URL für den Frequenzen Download</string>
@@ -82,7 +84,7 @@
     <string name="preferences_fill_database_with_dummy_values_summary">Datenbank erstellen und mit dummy Werten füllen</string>
 
     <string name="preferences_log_level_title">Log Level</string>
-    <string name="preferences_log_level_defaultValue">DEBUG</string>
+    <string name="preferences_log_level_defaultValue">INFO</string>
     <string name="preferences_log_threshold_for_auto_upload_title">Log Level Schwelle für automatischen Upload</string>
     <string name="preferences_log_threshold_for_auto_upload_defaultValue">ERROR</string>
     <string-array name="preferences_loglevel_spinner_choices">

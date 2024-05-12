@@ -30,8 +30,8 @@ class TripLogViewModel @Inject constructor(
 
     private fun getTripLogList() = viewModelScope.launch {
         val list = repository.getAllTripLogList()
-        val ascentNumber = list.sumOf { if(it.ascent) it.numberPassengers else 0 }
-        val descentNumber = list.sumOf { if(!it.ascent) it.numberPassengers else 0 }
+        val ascentNumber = repository.getSumAscent()
+        val descentNumber = repository.getSumDescent()
         updateState { copy(tripLogList = list, ascentNumber = ascentNumber, descentNumber = descentNumber) }
     }
 

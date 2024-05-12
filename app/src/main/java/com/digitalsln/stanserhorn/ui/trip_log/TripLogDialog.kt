@@ -14,11 +14,13 @@ import com.digitalsln.stanserhorn.R
 import com.digitalsln.stanserhorn.data.locale.entries.TripLogEntry
 import com.digitalsln.stanserhorn.databinding.DialogAddTripLogBinding
 import com.digitalsln.stanserhorn.repositoies.TripLogRepository
+import com.digitalsln.stanserhorn.tools.DateUtils
 import com.digitalsln.stanserhorn.tools.Logger
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.GregorianCalendar
 import java.util.Locale
 import javax.inject.Inject
@@ -46,7 +48,8 @@ class TripLogDialog: DialogFragment() {
                 when(tripDialogType) {
                     is TripDialogType.UpdateTripType -> {
                         val tripLogEntry = (tripDialogType as TripDialogType.UpdateTripType).tripLogEntry
-                        setTitle(context?.getString(R.string.triplog_update_trip_dialog_title, tripLogEntry.date))
+                        val date = DateUtils.formatDateToServerDateString(Date(tripLogEntry.time))
+                        setTitle(context?.getString(R.string.triplog_update_trip_dialog_title, date))
                         setEditData(tripLogEntry)
                     }
                     TripDialogType.AddTripType -> {
@@ -72,11 +75,7 @@ class TripLogDialog: DialogFragment() {
                     binding.minutePicker.value,
                 )
 
-                val timeFormat = SimpleDateFormat("HH:mm:00", Locale.GERMANY)
-                val date = dateFormat.format(dateCalendar.time)
-                val time = timeFormat.format(dateCalendar.time)
-
-                createOrUpdateTripLogEntry(deviceUID, tripOfDay, date, time, passengers, ascent == 1, remarks)
+                createOrUpdateTripLogEntry(deviceUID, tripOfDay, dateCalendar.timeInMillis, passengers, ascent == 1, remarks)
             }
             .setNegativeButton(R.string.triplog_add_trip_dialog_cancel) { dialog, _ -> dismiss() }
             .setView(binding.root)
@@ -139,8 +138,7 @@ class TripLogDialog: DialogFragment() {
     private fun createOrUpdateTripLogEntry(
         deviceUID: String,
         tripOfDay: Int,
-        date: String,
-        time: String,
+        time: Long,
         passengers: Int,
         ascent: Boolean,
         remarks: String,
@@ -151,7 +149,6 @@ class TripLogDialog: DialogFragment() {
                 tripLogRepository.createTripLog(
                     deviceUID = deviceUID,
                     tripOfDay = tripOfDay,
-                    date = date,
                     time = time,
                     passengers = passengers,
                     ascent = ascent,
@@ -163,7 +160,6 @@ class TripLogDialog: DialogFragment() {
                 tripLogRepository.updateTripLog(
                     deviceUID = deviceUID,
                     tripOfDay = tripOfDay,
-                    date = date,
                     time = time,
                     passengers = passengers,
                     ascent = ascent,
@@ -202,8 +198,7 @@ class TripLogDialog: DialogFragment() {
 
     private fun setEditData(tripLog: TripLogEntry) {
 
-        val dateTime = SimpleDateFormat("HH:mm", Locale.GERMANY).parse(tripLog.time)
-        val calendar = Calendar.getInstance().apply { time = dateTime }
+        val calendar = Calendar.getInstance().apply { timeInMillis = tripLog.time }
 
         binding.hourPicker.apply {
             maxValue = 23

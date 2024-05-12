@@ -10,11 +10,9 @@ data class TripLogEntry(
     val deviceUID: String,
     val cabinNumber: Int,
     val tripOfDay: Int,
-    val date: String,
-    val time: String,
+    val time: Long,
     val numberPassengers: Int,
     val ascent: Boolean,
     val remarks: String,
-    val show: Boolean,
     val updated: Boolean,
 )

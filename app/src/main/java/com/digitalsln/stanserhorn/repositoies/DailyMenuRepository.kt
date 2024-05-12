@@ -1,5 +1,6 @@
 package com.digitalsln.stanserhorn.repositoies
 
+import android.util.Log
 import com.digitalsln.stanserhorn.data.DataUpdateEvent
 import com.digitalsln.stanserhorn.data.PreferenceHelper
 import com.digitalsln.stanserhorn.data.locale.dao.DailyMenuDao
@@ -11,6 +12,7 @@ import com.digitalsln.stanserhorn.tools.DateUtils
 import com.digitalsln.stanserhorn.tools.Logger
 import com.digitalsln.stanserhorn.tools.NetworkHelper
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
+import java.util.Date
 import javax.inject.Inject
 
 
@@ -32,8 +34,7 @@ class DailyMenuRepository @Inject constructor(
                     itemNumber = 0,
                     title = "Pizza",
                     text = "Lorem ipsum dolor sit amet consectetur. At feugiat varius et pellentesque non risus. Faucibus non ac suspendisse nec parturient molestie.",
-                    date = "2013.10.30",
-                    show = true,
+                    time = Date().time,
                 )
             )
         }
@@ -46,7 +47,11 @@ class DailyMenuRepository @Inject constructor(
         dataUpdateChannel.send(DataUpdateEvent.DailyMenuUpdated)
     }
 
-    suspend fun getAllDailyMenuList(): List<DailyMenuEntry> = dailyMenuDao.getAllShowItem()
+    suspend fun getAllDailyMenuList(): List<DailyMenuEntry> {
+        Log.d("TEST", "get menu")
+        val currentTime = DateUtils.getStartOfCurrentDayTime()
+        return dailyMenuDao.getAllShowItem(currentTime)
+    }
 
     suspend fun synchronizeTable(): Boolean {
         val url = preferenceHelper.dailyMenuUrl
@@ -55,7 +60,7 @@ class DailyMenuRepository @Inject constructor(
             XmlMapper().readValue(it, DailyMenuRemote::class.java)
         } ?: return false
 
-        // получаем все id
+        // get all id
         val allIds = dailyMenuDao.getAllIds()
         val listToRemove = allIds.toMutableList()
 

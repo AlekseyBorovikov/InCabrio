@@ -9,6 +9,5 @@ data class DailyMenuEntry(
     val itemNumber: Int,
     val title: String,
     val text: String,
-    val date: String,
-    val show: Boolean,
+    val time: Long,
 )

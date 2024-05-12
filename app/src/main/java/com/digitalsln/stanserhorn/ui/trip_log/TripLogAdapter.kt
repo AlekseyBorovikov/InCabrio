@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.digitalsln.stanserhorn.data.locale.entries.TripLogEntry
 import com.digitalsln.stanserhorn.databinding.ItemTripLogBinding
 import com.digitalsln.stanserhorn.tools.DateUtils
+import java.util.Date
 
 class TripLogAdapter(private val onLongClickItem: (TripLogEntry) -> Unit = {}) : ListAdapter<TripLogEntry, TripLogAdapter.TripLogViewHolder>(DiffUtilItemCallback()) {
 
@@ -47,8 +48,13 @@ class TripLogAdapter(private val onLongClickItem: (TripLogEntry) -> Unit = {}) :
         fun onBind(item: TripLogEntry) {
             binding.run {
                 idValue.text = item.tripOfDay.toString()
-                dateValue.text = DateUtils.shortenDate(item.date)
-                timeValue.text = DateUtils.truncateSecondsFromTime(item.time)
+
+                val dateTime = Date(item.time)
+                val date = DateUtils.formatDateToServerDateString(dateTime)
+                val time = DateUtils.formatDateToServerTimeString(dateTime)
+
+                dateValue.text = DateUtils.shortenDate(date)
+                timeValue.text = DateUtils.truncateSecondsFromTime(time)
                 nameValue.text = if (item.ascent) "Bergfahrt" else "Talfahrt"
                 peopleValue.text = item.numberPassengers.toString()
             }

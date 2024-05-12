@@ -7,10 +7,12 @@ import com.digitalsln.stanserhorn.data.locale.entries.TripLogEntry
 import com.digitalsln.stanserhorn.data.mappers.TripLogMapper
 import com.digitalsln.stanserhorn.data.remote.TripLogRemote
 import com.digitalsln.stanserhorn.tools.DataUpdateChannel
+import com.digitalsln.stanserhorn.tools.DateUtils
 import com.digitalsln.stanserhorn.tools.Logger
 import com.digitalsln.stanserhorn.tools.NetworkHelper
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import okhttp3.FormBody
+import java.util.Date
 import javax.inject.Inject
 
 class TripLogRepository @Inject constructor(
@@ -36,12 +38,10 @@ class TripLogRepository @Inject constructor(
                     deviceUID = "4687",
                     cabinNumber = 13,
                     tripOfDay = 301,
-                    date = "2024-03-12",
-                    time = "17:16",
+                    time = Date().time,
                     numberPassengers = 25,
                     ascent = false,
                     remarks = "Talfahrt",
-                    show = true,
                     updated = false,
                 )
             )
@@ -55,7 +55,10 @@ class TripLogRepository @Inject constructor(
         dataUpdateChannel.send(DataUpdateEvent.TripLogUpdated)
     }
 
-    suspend fun getAllTripLogList(): List<TripLogEntry> = tripLogDao.getAllShowItem(preferenceHelper.cabinNumber)
+    suspend fun getAllTripLogList(): List<TripLogEntry> = tripLogDao.getAllShowItem(preferenceHelper.cabinNumber, DateUtils.getTimeStartForTripLog())
+
+    suspend fun getSumAscent(): Int = tripLogDao.getAscentNumber(DateUtils.getTimeStartForTripLog()) ?: 0
+    suspend fun getSumDescent(): Int = tripLogDao.getDescentNumber(DateUtils.getTimeStartForTripLog()) ?: 0
 
     suspend fun synchronizeTable(): Boolean {
         val url = preferenceHelper.tripLogDownloadUrl
@@ -70,7 +73,7 @@ class TripLogRepository @Inject constructor(
         val allIds = allEntities.map { it.globeId ?: 0 }
         val listToRemove = allIds.toMutableList()
 
-        return try {
+        return kotlin.runCatching {
             // update or insert new entries
             tripLogRemote.entries?.forEach { tripLogEntry ->
                 val localEntry = TripLogMapper.mapFromRemote(tripLogEntry)
@@ -80,12 +83,10 @@ class TripLogRepository @Inject constructor(
                         updateEntry.copy(
                             cabinNumber = localEntry.cabinNumber,
                             tripOfDay = localEntry.tripOfDay,
-                            date = localEntry.date,
                             time = localEntry.time,
                             numberPassengers = localEntry.numberPassengers,
                             ascent = localEntry.ascent,
                             remarks = localEntry.remarks,
-                            show = localEntry.show,
                             updated = localEntry.updated,
                         )
                     )
@@ -95,17 +96,15 @@ class TripLogRepository @Inject constructor(
             tripLogDao.deleteByIds(listToRemove)
             dataUpdateChannel.send(DataUpdateEvent.TripLogUpdated)
             true
-        } catch (e: Exception) {
+        }.onFailure { e ->
             Logger.e("$TAG: Could not parse XML ('${e.message}').", e)
-            false
-        }
+        }.getOrElse { false }
     }
 
     suspend fun createTripLog(
         deviceUID: String,
         tripOfDay: Int,
-        date: String,
-        time: String,
+        time: Long,
         passengers: Int,
         ascent: Boolean,
         remarks: String,
@@ -116,12 +115,10 @@ class TripLogRepository @Inject constructor(
             deviceUID = deviceUID,
             cabinNumber = preferenceHelper.cabinNumber.toIntOrNull() ?: 0,
             tripOfDay = tripOfDay,
-            date = date,
             time = time,
             numberPassengers = passengers,
             ascent = ascent,
             remarks = remarks,
-            show = TripLogMapper.show(date, time),
             updated = false,
         )
         tripLogDao.insert(tripLogEntry)
@@ -133,8 +130,7 @@ class TripLogRepository @Inject constructor(
         globeId: Int?,
         deviceUID: String,
         tripOfDay: Int,
-        date: String,
-        time: String,
+        time: Long,
         passengers: Int,
         ascent: Boolean,
         remarks: String,
@@ -145,13 +141,11 @@ class TripLogRepository @Inject constructor(
             deviceUID = deviceUID,
             cabinNumber = preferenceHelper.cabinNumber.toIntOrNull() ?: 0,
             tripOfDay = tripOfDay,
-            date = date,
             time = time,
             numberPassengers = passengers,
             ascent = ascent,
             remarks = remarks,
-            show = TripLogMapper.show(date, time),
-            updated = true,
+            updated = globeId != null,
         )
         tripLogDao.update(tripLogEntry)
         dataUpdateChannel.send(DataUpdateEvent.TripLogUpdated)
@@ -219,6 +213,9 @@ class TripLogRepository @Inject constructor(
 
         val urlString: String = preferenceHelper.tripLogUploadUrl
 
+        val date = DateUtils.formatDateToServerDateString(Date(tripLogEntry.time))
+        val time = DateUtils.formatDateToServerTimeString(Date(tripLogEntry.time))
+
         return networkHelper.postToUrl(
             urlString = urlString,
             requestBody = FormBody.Builder()
@@ -228,11 +225,11 @@ class TripLogRepository @Inject constructor(
                 .add("fahrt_geraete_id", tripLogEntry.deviceUID)
                 .add("fahrt_kabine", tripLogEntry.cabinNumber.toString())
                 .add("fahrt_fahrtenzaehler_tag", tripLogEntry.tripOfDay.toString())
-                .add("fahrt_datum", tripLogEntry.date)
-                .add("fahrt_zeit", tripLogEntry.time)
+                .add("fahrt_datum", date)
+                .add("fahrt_zeit", time)
                 .add("fahrt_pax", tripLogEntry.numberPassengers.toString())
                 .add("fahrt_bergfahrt", (if (tripLogEntry.ascent) 1 else 0).toString())
-                .add("fahrt_bemerkungen", tripLogEntry.remarks)
+                .add("fahrt_bemerkungen", String(tripLogEntry.remarks.toByteArray(), Charsets.UTF_8))
                 .build()
         ) { responseBody ->
             val responseBodyString = responseBody?.string()
@@ -248,7 +245,7 @@ class TripLogRepository @Inject constructor(
         }
     }
 
-    suspend fun getTripOfDayFromDb() = tripLogDao.getTripLogsByShow(true, preferenceHelper.cabinNumber).firstOrNull()?.tripOfDay ?: 0
-    suspend fun getLastDirection() = tripLogDao.getTripLogsSortedByDate(preferenceHelper.cabinNumber).firstOrNull()?.ascent ?: false
+    suspend fun getTripOfDayFromDb() = tripLogDao.getTripLogsByShow(preferenceHelper.cabinNumber, DateUtils.getTimeStartForTripLog()).firstOrNull()?.tripOfDay ?: 0
+    suspend fun getLastDirection() = tripLogDao.getTripLogsSortedByDate(preferenceHelper.cabinNumber, DateUtils.getTimeStartForTripLog()).firstOrNull()?.ascent ?: false
 
 }
