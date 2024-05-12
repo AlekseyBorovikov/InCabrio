@@ -15,8 +15,6 @@ class MainViewModel @Inject constructor(
     private val preferenceHelper: PreferenceHelper,
 ): ChannelListeningViewModel<MainViewState, WifiConnectionState>(wifiStateChannel) {
 
-    init { dataUpdateManager.start() }
-
     override fun initState() = MainViewState()
 
     override fun onDataUpdateEvent(event: WifiConnectionState) {
@@ -29,8 +27,11 @@ class MainViewModel @Inject constructor(
     fun canNavigateWhenWifiLost() = preferenceHelper.automaticallyOpenAddTripLog
     fun getCorrectWifiName() = preferenceHelper.correctWifiSsid
 
-    override fun onCleared() {
-        super.onCleared()
+    fun startDataUpdateManager() {
+        dataUpdateManager.start()
+    }
+
+    fun stopDataUpdateManager() {
         dataUpdateManager.stop()
     }
 }

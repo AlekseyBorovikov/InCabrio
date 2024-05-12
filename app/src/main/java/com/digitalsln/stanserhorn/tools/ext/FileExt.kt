@@ -14,45 +14,44 @@ import kotlinx.coroutines.launch
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
-import java.io.IOException
 
 fun Context.writeToFile(logMessage: String) {
-    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) CoroutineScope(Dispatchers.IO).launch {
-        val resolver = contentResolver
-        val collection = MediaStore.Files.getContentUri("external")
+    kotlin.runCatching {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) CoroutineScope(Dispatchers.IO).launch {
+            val resolver = contentResolver
+            val collection = MediaStore.Files.getContentUri("external")
 
-        // Проверяем, существует ли файл
-        val selection = MediaStore.Files.FileColumns.DISPLAY_NAME + "=?"
-        val selectionArgs = arrayOf(Logger.getFileName())
-        val cursor = resolver.query(collection, null, selection, selectionArgs, null)
+            // Проверяем, существует ли файл
+            val selection = MediaStore.Files.FileColumns.DISPLAY_NAME + "=?"
+            val selectionArgs = arrayOf(Logger.getFileName())
+            val cursor = resolver.query(collection, null, selection, selectionArgs, null)
 
-        val uri: Uri? = if (cursor != null && cursor.moveToFirst()) {
-            // Файл существует, получаем его URI
-            val sad = cursor.getColumnIndex(MediaStore.Files.FileColumns._ID)
-            if (sad <= -1) null
-            val id = cursor.getLong(sad)
-            cursor.close()
-            Uri.withAppendedPath(MediaStore.Files.getContentUri("external"), "" + id)
-        } else {
-            // Файл не существует, создаем новый
-            val values = ContentValues().apply {
-                put(MediaStore.Files.FileColumns.DISPLAY_NAME, Logger.getFileName())
-                put(MediaStore.Files.FileColumns.MIME_TYPE, "text/plain")
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    put(MediaStore.Files.FileColumns.RELATIVE_PATH, Environment.DIRECTORY_DOCUMENTS)
+            val uri: Uri? = if (cursor != null && cursor.moveToFirst()) {
+                // Файл существует, получаем его URI
+                val sad = cursor.getColumnIndex(MediaStore.Files.FileColumns._ID)
+                if (sad <= -1) null
+                val id = cursor.getLong(sad)
+                cursor.close()
+                Uri.withAppendedPath(MediaStore.Files.getContentUri("external"), "" + id)
+            } else {
+                // Файл не существует, создаем новый
+                val values = ContentValues().apply {
+                    put(MediaStore.Files.FileColumns.DISPLAY_NAME, Logger.getFileName())
+                    put(MediaStore.Files.FileColumns.MIME_TYPE, "text/plain")
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        put(MediaStore.Files.FileColumns.RELATIVE_PATH, Environment.DIRECTORY_DOCUMENTS)
+                    }
                 }
+                resolver.insert(collection, values)!!
             }
-            resolver.insert(collection, values)!!
-        }
 
-        if (uri == null) return@launch
+            if (uri == null) return@launch
 
-        // Добавляем текст в файл
-        resolver.openOutputStream(uri, "wa")?.use { outputStream ->
-            outputStream.write("$logMessage\n".toByteArray())
-        }
-    } else {
-        try {
+            // Добавляем текст в файл
+            resolver.openOutputStream(uri, "wa")?.use { outputStream ->
+                outputStream.write("$logMessage\n".toByteArray())
+            }
+        } else {
             val root =
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
             val logFile = File(root, Logger.getFileName())
@@ -64,8 +63,8 @@ fun Context.writeToFile(logMessage: String) {
                 writer.append(logMessage)
                 writer.newLine()
             }
-        } catch (e: IOException) {
-            Log.e("Logger", "Error writing to log file", e)
         }
-    }
+    }.onFailure {
+        Log.e("Logger", "Error writing to log file", it)
+    }.getOrNull()
 }

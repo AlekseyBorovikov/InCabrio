@@ -43,6 +43,7 @@ object ReservationMapper {
         if (latency == 0 || timeAscent == "00:00:00") {
             return true
         }
+
         val nowDate = Date()
         val timeDownFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.GERMANY)
         val timeDown: Date = try {

@@ -24,8 +24,8 @@ interface DailyMenuDao {
     @Query("SELECT * FROM daily_menu")
     suspend fun getAllItem(): List<DailyMenuEntry>
 
-    @Query("SELECT * FROM daily_menu WHERE show = 1 ORDER BY itemNumber ASC")
-    suspend fun getAllShowItem(): List<DailyMenuEntry>
+    @Query("SELECT * FROM daily_menu WHERE time >= :time ORDER BY itemNumber ASC")
+    suspend fun getAllShowItem(time: Long): List<DailyMenuEntry>
 
     @Query("DELETE FROM daily_menu")
     suspend fun deleteAll()

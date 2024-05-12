@@ -6,15 +6,15 @@ import com.digitalsln.stanserhorn.tools.DateUtils
 
 object DailyMenuMapper {
 
-    fun mapFromRemote(remoteEntry: DailyMenuEntryRemote) = DailyMenuEntry(
-        id = remoteEntry.menuId,
-        itemNumber = remoteEntry.menuSeq,
-        title = remoteEntry.menuTitle,
-        text = remoteEntry.menuText,
-        date = remoteEntry.menuDate,
-        show = isShow(remoteEntry.menuDate)
-    )
-
-    private fun isShow(menuDate: String) = DateUtils.isDateCurrent(menuDate)
+    fun mapFromRemote(remoteEntry: DailyMenuEntryRemote): DailyMenuEntry {
+        val dateTime = DateUtils.convertTimeFromFrom(remoteEntry.menuDate + " 00:00")
+        return DailyMenuEntry(
+            id = remoteEntry.menuId,
+            itemNumber = remoteEntry.menuSeq,
+            title = remoteEntry.menuTitle,
+            text = remoteEntry.menuText,
+            time = dateTime.time,
+        )
+    }
 
 }

@@ -3,7 +3,6 @@ package com.digitalsln.stanserhorn.tools
 import android.content.Context
 import android.util.Log
 import com.digitalsln.stanserhorn.R
-import com.digitalsln.stanserhorn.tools.ext.writeToFile
 import kotlinx.coroutines.sync.Semaphore
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -97,7 +96,7 @@ class Logger private constructor(private val context: Context) {
 
             val logMessage = formatLogMessage(safeLevel, message)
 
-            context.writeToFile(logMessage)
+//            context.writeToFile(logMessage)
             s.release()
         }
     }
